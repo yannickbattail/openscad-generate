@@ -1,0 +1,38 @@
+{
+  "name": "openscad-generate",
+  "description": "Generate 3D models, animations and images from OpenSCAD files",
+  "version": "1.0.0",
+  "author": "XcinnaY",
+  "maintainer": "XcinnaY",
+  "license": "LGPL-3.0-or-later",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "bin": {
+    "sln-cli": "./dist/src/index.js"
+  },
+  "scripts": {
+    "clean": "rm ./*.js ./*/*.js",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start": "node ./server.js",
+    "lint": "eslint --fix './**/*.ts'",
+    "format": "prettier -w ."
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0",
+    "openscad-cli-wrapper": "^0.8.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@types/node": "^22.13.9",
+    "eslint": "^9.22.0",
+    "globals": "^16.1.0",
+    "prettier": "^3.5.3",
+    "stylelint": "^16.15.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
+  }
+}
