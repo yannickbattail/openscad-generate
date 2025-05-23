@@ -1,5 +1,11 @@
 import * as path from "node:path";
 import * as fs from "node:fs";
+
+import { execOutput } from "./util/execBash.js";
+import chalk from "chalk";
+import { GenerateAnimation } from "./util/AnimationGeneration.js";
+import { GenerateMosaic } from "./util/MosaicGeneration.js";
+import { defaultFormats, ExportAllFormat, GeneratedFormat } from "./types.js";
 import {
   animOptions,
   Export2dFormat,
@@ -12,12 +18,6 @@ import {
   ParameterSet,
   ParameterSetName,
 } from "openscad-cli-wrapper";
-
-import { execOutput } from "./util/execBash.js";
-import chalk from "chalk";
-import { GenerateAnimation } from "./util/AnimationGeneration.js";
-import { GenerateMosaic } from "./util/MosaicGeneration.js";
-import { defaultFormats, ExportAllFormat, GeneratedFormat } from "./types.js";
 
 const options = getOptions();
 options.outputDir = "./gen";

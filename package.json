@@ -1,16 +1,14 @@
 {
   "name": "openscad-generate",
   "description": "Generate 3D models, animations and images from OpenSCAD files",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "XcinnaY",
   "maintainer": "XcinnaY",
   "license": "LGPL-3.0-or-later",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "bin": {
-    "sln-cli": "./dist/src/index.js"
-  },
+  "bin": "./dist/src/index.js",
   "scripts": {
     "clean": "rm ./*.js ./*/*.js",
     "build": "tsc",
@@ -23,7 +21,7 @@
     "ajv": "^8.17.1",
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
-    "openscad-cli-wrapper": "^0.8.1"
+    "openscad-cli-wrapper": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

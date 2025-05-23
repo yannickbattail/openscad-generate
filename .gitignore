@@ -1,6 +1,5 @@
 node_modules
 dist
-*.js
-*.js.map
-generatedImages
+coverage
+openscad-generate-*.tgz
 .idea
