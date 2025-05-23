@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Command } from "commander";
 import { unicorn } from "./util/unicorn.js";
 import { allFormats, defaultFormats, ExportAllFormat } from "./types.js";
@@ -6,9 +8,9 @@ import { generate } from "./generation.js";
 const program = new Command();
 
 program
-  .name("string-util")
+  .name("openscad-generate")
   .description("CLI to some JavaScript string utilities")
-  .version("0.8.0");
+  .version("1.0.2");
 
 program
   .command("generate")
