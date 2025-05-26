@@ -1,17 +1,17 @@
 import { OpenScadOutputWithSummary } from "openscad-cli-wrapper";
 
-export function GenerateAnimation(
+export async function GenerateAnimation(
   output: OpenScadOutputWithSummary,
   animDelay: number,
-  execCmd: (cmd: string) => string,
-) {
+  execCmd: (cmd: string) => Promise<string>,
+): Promise<OpenScadOutputWithSummary> {
   const animImagesPattern = output.file;
   output.file = animImagesPattern
     .replace("*.png", ".webp")
     .replace("_animation", "");
-  output.output += execCmd(
+  output.output += await execCmd(
     `img2webp -o "${output.file}" -d "${animDelay}" ${animImagesPattern}`,
   );
-  output.output += execCmd(`rm ${animImagesPattern}`);
+  output.output += await execCmd(`rm ${animImagesPattern}`);
   return output;
 }

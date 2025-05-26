@@ -1,15 +1,16 @@
-import { execSync } from "child_process";
+import { exec } from "child_process";
 import chalk from "chalk";
+import util from "util";
 
 export type Stdio = "pipe" | "stdout";
 
 export function createFctExecCommand(
   quietMode: boolean,
   showCommand = false,
-): (command: string) => string {
-  return function (command: string) {
+): (command: string) => Promise<string> {
+  return async (command: string): Promise<string> => {
     return (
-      execCommand(
+      (await execCommand(
         command,
         {
           stdio: quietMode ? "pipe" : "stdout",
@@ -17,7 +18,7 @@ export function createFctExecCommand(
           quietMode: quietMode,
         },
         showCommand,
-      ) ?? ""
+      )) ?? ""
     );
   };
 }
@@ -35,7 +36,7 @@ export function createFctExecCommand(
  * @returns The output of the command as a string if `stdio` is set to 'pipe', otherwise undefined.
  * @throws An error if the command fails and `allowFailure` is set to false.
  */
-export function execCommand(
+export async function execCommand(
   command: string,
   {
     cwd,
@@ -49,25 +50,22 @@ export function execCommand(
     quietMode?: boolean;
   } = {},
   showCommand = false,
-) {
+): Promise<string> {
   try {
     if (showCommand) {
       console.log(chalk.blue(`$ ${command}`));
     }
-    const output = execSync(command, {
+    const execPromise = util.promisify(exec);
+    const output = await execPromise(command, {
       cwd,
       encoding: "utf-8",
       maxBuffer: 50 * 1024 * 1024,
-      stdio:
-        stdio === "pipe"
-          ? ["ignore", "pipe", "pipe"]
-          : ["ignore", process.stdout, process.stderr],
     });
     if (stdio === "pipe" && !quietMode) {
       console.log(`CMD output: ${output}`);
     }
 
-    return output;
+    return output.stdout + output.stderr;
   } catch (e) {
     if (allowFailure) {
       console.warn(
@@ -75,7 +73,7 @@ export function execCommand(
           e && typeof e === "object" && "message" in e ? e.message : e,
         ),
       );
-      return;
+      return "";
     }
     throw e;
   }
