@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import * as fs from "node:fs";
 
-import { execOutput } from "./util/execBash.js";
+import { createFctExecCommand } from "./util/execBash.js";
 import chalk from "chalk";
 import { GenerateAnimation } from "./util/AnimationGeneration.js";
 import { GenerateMosaic } from "./util/MosaicGeneration.js";
@@ -38,7 +38,9 @@ animOptions.animDelay = 50;
 export function generate(
   fileName: string,
   outFormats: ExportAllFormat[],
-  onlyParameterSetNames?: string,
+  onlyParameterSetNames: string,
+  continueOnError: boolean,
+  debugMode: boolean,
 ) {
   const formats = outFormats ? outFormats : defaultFormats;
   console.log(
@@ -50,7 +52,8 @@ export function generate(
   if (!fs.existsSync(options.outputDir)) {
     fs.mkdirSync(options.outputDir);
   }
-  const openscad = new OpenScad(fileName, options, execOutput);
+  const execCmd = createFctExecCommand(!debugMode, debugMode);
+  const openscad = new OpenScad(fileName, options, execCmd);
 
   const fileNameWithoutExtension = path.basename(
     fileName,
@@ -70,7 +73,13 @@ export function generate(
           parameterName: key,
         };
         options.suffix = key;
-        generateParamSet(openscad, parameterFileSet, formats);
+        generateParamSet(
+          openscad,
+          parameterFileSet,
+          formats,
+          continueOnError,
+          execCmd,
+        );
       }
     }
   } catch (error) {
@@ -82,6 +91,8 @@ function generateParamSet(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
   outFormats: ExportAllFormat[],
+  continueOnError: boolean,
+  execCmd: (cmd: string) => string,
 ) {
   for (const format of outFormats ?? defaultFormats) {
     try {
@@ -90,7 +101,7 @@ function generateParamSet(
           `Generating model for parameter set: ${parameterFileSet.parameterName} to format: ${format}`,
         ),
       );
-      genParamSetInFormat(format, openscad, parameterFileSet);
+      genParamSetInFormat(format, openscad, parameterFileSet, execCmd);
     } catch (e) {
       console.error(
         chalk.red(
@@ -98,6 +109,9 @@ function generateParamSet(
         ),
         e,
       );
+      if (!continueOnError) {
+        throw e;
+      }
     }
   }
 }
@@ -106,13 +120,14 @@ function genParamSetInFormat(
   format: ExportAllFormat,
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
+  execCmd: (cmd: string) => string,
 ) {
   if (Object.values(Export2dFormat).includes(format as Export2dFormat)) {
     openscad.generateImage(parameterFileSet, imageOptions);
   } else if (format === GeneratedFormat.webp) {
-    genAnimation(openscad, parameterFileSet);
+    genAnimation(openscad, parameterFileSet, execCmd);
   } else if (format === GeneratedFormat.jpg) {
-    genMosaic(openscad, parameterFileSet);
+    genMosaic(openscad, parameterFileSet, execCmd);
   } else if (Object.values(Export3dFormat).includes(format as Export3dFormat)) {
     openscad.generateModel(
       parameterFileSet,
@@ -125,6 +140,7 @@ function genParamSetInFormat(
 function genAnimation(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
+  execCmd: (cmd: string) => string,
 ): void {
   const fileContent = fs.readFileSync(parameterFileSet.parameterFile, "utf-8");
   const parameterSet = JSON.parse(
@@ -139,14 +155,15 @@ function genAnimation(
   };
   const orig_suffix = options.suffix;
   options.suffix += "_animation";
-  let out = openscad.generateAnimation(paramSetName, animOptions);
-  GenerateAnimation(out, animOptions.animDelay);
+  const out = openscad.generateAnimation(paramSetName, animOptions);
+  GenerateAnimation(out, animOptions.animDelay, execCmd);
   options.suffix = orig_suffix;
 }
 
 function genMosaic(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
+  execCmd: (cmd: string) => string,
 ): void {
-  GenerateMosaic(parameterFileSet);
+  GenerateMosaic(parameterFileSet, execCmd);
 }

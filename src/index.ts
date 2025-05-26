@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name("openscad-generate")
   .description("CLI to some JavaScript string utilities")
-  .version("1.0.2");
+  .version("1.0.3");
 
 program
   .command("generate")
@@ -25,11 +25,23 @@ program
     `list of outFormats (separated by coma) to refresh : (${allFormats.join(",")}). If not provided, all will be refreshed.`,
     defaultFormats.join(","),
   )
+  .option(
+    "-c, --continueOnError <continueOnError>",
+    `continue on error (default: false). If true, it will continue to run even if a command (openscad, webp, imagemagic) fails.`,
+    "false",
+  )
+  .option(
+    "-D, --debugMode <debugMode>",
+    `run in debug mode (default: false). If true, the command  and its output will be logged.`,
+    "false",
+  )
   .action((openscadFile, options) =>
     generate(
       openscadFile,
       toExportAllFormat(options.outFormats),
       options.onlyParameterSet,
+      active(options.continueOnError),
+      active(options.debugMode),
     ),
   );
 
@@ -48,4 +60,13 @@ function toExportAllFormat(formats: string): ExportAllFormat[] {
     throw new Error(`Invalid formats: ${invalid.join(", ")}`);
   }
   return values as ExportAllFormat[];
+}
+
+function active(value: string): boolean {
+  return (
+    value.toLowerCase() === "true" ||
+    value.toLowerCase() === "on" ||
+    value.toLowerCase() === "yes" ||
+    value === "1"
+  );
 }
