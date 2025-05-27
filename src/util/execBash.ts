@@ -4,10 +4,7 @@ import util from "util";
 
 export type Stdio = "pipe" | "stdout";
 
-export function createFctExecCommand(
-  quietMode: boolean,
-  showCommand = false,
-): (command: string) => Promise<string> {
+export function createFctExecCommand(quietMode: boolean, showCommand = false): (command: string) => Promise<string> {
   return async (command: string): Promise<string> => {
     return (
       (await execCommand(
@@ -68,11 +65,7 @@ export async function execCommand(
     return output.stdout + output.stderr;
   } catch (e) {
     if (allowFailure) {
-      console.warn(
-        chalk.yellow(
-          e && typeof e === "object" && "message" in e ? e.message : e,
-        ),
-      );
+      console.warn(chalk.yellow(e && typeof e === "object" && "message" in e ? e.message : e));
       return "";
     }
     throw e;

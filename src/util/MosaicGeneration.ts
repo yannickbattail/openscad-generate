@@ -1,11 +1,9 @@
-import {
-  OpenScadOutputWithSummary,
-  ParameterFileSet,
-} from "openscad-cli-wrapper";
+import { Executor, OpenScadOutputWithSummary, ParameterFileSet } from "openscad-cli-wrapper";
 
 export async function GenerateMosaic(
   parameterFileSet: ParameterFileSet,
-  execCmd: (cmd: string) => Promise<string>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  executor: Executor,
 ): Promise<OpenScadOutputWithSummary> {
   // montage ${imagemagick_debug} -geometry "${image_mosaic_geometry}" -tile "${image_mosaic_tile}" "${jpg_dir}/"*.png "${jpg_dir}/mosaic_${scad_file_name}.jpg"
   // let output = execOutput(

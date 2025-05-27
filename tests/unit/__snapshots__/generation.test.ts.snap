@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generation > getOpenscadOptions 1`] = `
+OpenScadOptions {
+  "backend": "Manifold",
+  "check_parameter_ranges": false,
+  "check_parameters": false,
+  "debug": null,
+  "experimentalFeatures": ExperimentalFeatures {
+    "import_function": true,
+    "input_driver_dbus": false,
+    "lazy_union": true,
+    "predictible_output": true,
+    "python_engine": false,
+    "roof": true,
+    "textmetrics": true,
+    "vertex_object_renderers_indexing": true,
+  },
+  "hardwarnings": false,
+  "openScadExecutable": "openscad",
+  "outputDir": "./gen",
+  "python_module": null,
+  "quiet": false,
+  "trust_python": false,
+}
+`;
