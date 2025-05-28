@@ -1,7 +1,9 @@
-import { Executor, OpenScadOutputWithSummary, ParameterFileSet } from "openscad-cli-wrapper";
+import { Executor, OpenScadOptions, OpenScadOutputWithSummary, ParameterFileSet } from "openscad-cli-wrapper";
 
 export async function GenerateMosaic(
   parameterFileSet: ParameterFileSet,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  options: OpenScadOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   executor: Executor,
 ): Promise<OpenScadOutputWithSummary> {
