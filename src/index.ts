@@ -7,7 +7,7 @@ import { generate } from "./generation.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.0.6");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.0.7");
 
 program
   .command("generate")
@@ -17,7 +17,12 @@ program
   .option(
     "-o, --outFormats <outFormats>",
     `list of outFormats (separated by coma) to refresh : (${allFormats.join(",")}). If not provided, all will be refreshed.`,
-    defaultFormats.join(","),
+    toExportAllFormat,
+  )
+  .option(
+    "-m, --mosaicFormat <mosaicFormat>",
+    `Generate mosaic in the format WIDTH,HEIGHT of all parameterSets. Must have format png.`,
+    toMosaicFormat,
   )
   .option(
     "-c, --continueOnError <continueOnError>",
@@ -32,15 +37,16 @@ program
   .option(
     "-D, --debugMode <debugMode>",
     `run in debug mode (default: false). If true, the command  and its output will be logged.`,
-    "false",
+    active,
   )
   .action((openscadFile, options) =>
     generate({
       fileName: openscadFile,
-      outFormats: toExportAllFormat(options.outFormats),
+      outFormats: options.outFormats,
+      mosaicFormat: options.mosaicFormat,
       onlyParameterSet: options.onlyParameterSet,
       parallelJobs: options.parallelJobs ?? 1,
-      debugMode: active(options.debugMode),
+      debugMode: options.debugMode,
     }),
   );
 
@@ -53,6 +59,8 @@ program
 program.parse();
 
 function toExportAllFormat(formats: string): ExportAllFormat[] {
+  console.log(`base formats: ${formats}`);
+  if (!formats) return defaultFormats;
   const values = formats.split(",").map((v) => v.trim());
   const invalid = values.filter((v) => !allFormats.includes(v));
   if (invalid.length) {
@@ -65,6 +73,20 @@ function active(value: string): boolean {
   return (
     value.toLowerCase() === "true" || value.toLowerCase() === "on" || value.toLowerCase() === "yes" || value === "1"
   );
+}
+
+function toMosaicFormat(value: string):
+  | {
+      width: number;
+      height: number;
+    }
+  | undefined {
+  if (!value) return undefined;
+  const val = value?.split(",", 2);
+  return {
+    width: parseInt(val[0]),
+    height: parseInt(val[1]),
+  };
 }
 
 function CheckParseInt(value) {

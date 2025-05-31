@@ -13,4 +13,4 @@ export const allFormats: string[] = [
 
 export type ExportAllFormat = Export3dFormat | Export2dFormat | GeneratedFormat;
 
-export const defaultFormats = [Export2dFormat.png, GeneratedFormat.jpg, GeneratedFormat.webp, Export3dFormat["3mf"]];
+export const defaultFormats = [Export2dFormat.png, GeneratedFormat.webp, Export3dFormat["3mf"]];

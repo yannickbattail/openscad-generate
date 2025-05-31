@@ -13,7 +13,6 @@ import {
 import chalk from "chalk";
 import fs from "node:fs";
 import { GenerateAnimation } from "./util/AnimationGeneration.js";
-import { GenerateMosaic } from "./util/MosaicGeneration.js";
 
 export async function genParamSetInFormat(
   format: ExportAllFormat,
@@ -26,8 +25,6 @@ export async function genParamSetInFormat(
     return genImage(openscad, parameterFileSet, options);
   } else if (format === GeneratedFormat.webp) {
     return genAnimation(openscad, parameterFileSet, options, executor);
-  } else if (format === GeneratedFormat.jpg) {
-    return genMosaic(openscad, parameterFileSet, options, executor);
   } else if (Object.values(Export3dFormat).includes(format as Export3dFormat)) {
     return genModel(openscad, parameterFileSet, format as Export3dFormat, options);
   } else {
@@ -75,17 +72,5 @@ async function genModel(
   console.log(chalk.green(`➡️ Generating model for parameter set: ${parameterFileSet.parameterName}`));
   const openScadOutputWithSummary = await openscad.generateModel(parameterFileSet, format, options);
   console.log(chalk.green(`✅ Success generating model for parameter set: ${parameterFileSet.parameterName}`));
-  return openScadOutputWithSummary;
-}
-
-async function genMosaic(
-  openscad: OpenScad,
-  parameterFileSet: ParameterFileSet,
-  options: OpenScadOptions,
-  executor: Executor,
-): Promise<OpenScadOutputWithSummary> {
-  console.log(chalk.green(`➡️ Generating mosaic for parameter set: ${parameterFileSet.parameterName}`));
-  const openScadOutputWithSummary = await GenerateMosaic(parameterFileSet, options, executor);
-  console.log(chalk.green(`✅ Success generating mosaic for parameter set: ${parameterFileSet.parameterName}`));
   return openScadOutputWithSummary;
 }

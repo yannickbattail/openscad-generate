@@ -7,10 +7,15 @@ import { createFctExecCommand } from "./util/execBash.js";
 import { defaultFormats, ExportAllFormat } from "./types.js";
 import { ColorScheme, OpenScad, OpenScadOptions, OpenScadOutputWithSummary, ParameterSet } from "openscad-cli-wrapper";
 import { genParamSetInFormat } from "./generateFormat.js";
+import { GenerateMosaic } from "./util/MosaicGeneration.js";
 
 interface GenerateOptions {
   fileName: string;
   outFormats: ExportAllFormat[];
+  mosaicFormat?: {
+    width: number;
+    height: number;
+  };
   onlyParameterSet: string;
   parallelJobs: number;
   debugMode: boolean;
@@ -35,6 +40,7 @@ export function getOpenscadOptions(): OpenScadOptions {
 }
 
 export async function generate(genOptions: GenerateOptions) {
+  console.log(`GenerateMosaic for file: ${JSON.stringify(genOptions)}`);
   const outputDir = "./gen";
   const options = getOpenscadOptions();
   const formats = genOptions.outFormats ? genOptions.outFormats : defaultFormats;
@@ -67,7 +73,20 @@ export async function generate(genOptions: GenerateOptions) {
         ),
       )
       .flat();
-    await Promise.all(tasks);
+    const result = await Promise.all(tasks);
+    if (genOptions.mosaicFormat) {
+      const pngFiles = getPngResult(result);
+      await GenerateMosaic(
+        pngFiles,
+        {
+          outputPath: outputDir,
+          scadFileName: path.parse(genOptions.fileName).name,
+          tiles: genOptions.mosaicFormat,
+          debug: genOptions.debugMode,
+        },
+        executor,
+      );
+    }
   } catch (error) {
     console.error("Error reading or parsing the JSON file:", error);
   }
@@ -82,4 +101,8 @@ function fetchParameterSets(genOptions: GenerateOptions) {
     (paramSet) => !genOptions.onlyParameterSet || genOptions.onlyParameterSet === paramSet[0],
   );
   return { parameterSetFileName, paramSetToGenerate };
+}
+
+function getPngResult(result: OpenScadOutputWithSummary[]): string[] {
+  return result.filter((r) => r.file.endsWith(".png")).map((r) => r.file);
 }

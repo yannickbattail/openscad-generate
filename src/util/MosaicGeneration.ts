@@ -1,59 +1,45 @@
-import { Executor, OpenScadOptions, OpenScadOutputWithSummary, ParameterFileSet } from "openscad-cli-wrapper";
+import { Executor } from "openscad-cli-wrapper";
+import chalk from "chalk";
 
-export async function GenerateMosaic(
-  parameterFileSet: ParameterFileSet,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  options: OpenScadOptions,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  executor: Executor,
-): Promise<OpenScadOutputWithSummary> {
-  // montage ${imagemagick_debug} -geometry "${image_mosaic_geometry}" -tile "${image_mosaic_tile}" "${jpg_dir}/"*.png "${jpg_dir}/mosaic_${scad_file_name}.jpg"
-  // let output = execOutput(
-  //   `img2webp -o "${output.file}" -d "${animDelay}" ${animImagesPattern}`,
-  // );
-  // output += execOutput(`rm ${animImagesPattern}`);
-  return {
-    output: "",
-    modelFile: parameterFileSet.parameterFile,
-    summary: {
-      cache: {
-        cgal_cache: {
-          bytes: 0,
-          entries: 0,
-          max_size: 0,
-        },
-        geometry_cache: {
-          bytes: 0,
-          entries: 0,
-          max_size: 0,
-        },
-      },
-      camera: {
-        distance: 0,
-        fov: 0,
-        rotation: [0, 0, 0],
-        translation: [0, 0, 0],
-      },
-      geometry: {
-        bounding_box: {
-          max: [0, 0, 0],
-          min: [0, 0, 0],
-          size: [0, 0, 0],
-        },
-        dimensions: 0,
-        facets: 0,
-        simple: false,
-        vertices: 0,
-      },
-      time: {
-        hours: 0,
-        milliseconds: 0,
-        minutes: 0,
-        seconds: 0,
-        time: "",
-        total: 0,
-      },
-    },
-    file: "",
+export type MosaicOptions = {
+  scadFileName: string;
+  outputPath: string;
+  geometry?: {
+    width: number;
+    height: number;
+    border: number;
   };
+  tiles?: {
+    width: number;
+    height: number;
+  };
+  debug?: boolean;
+};
+
+const options: MosaicOptions = {
+  scadFileName: "model",
+  outputPath: "./gen",
+  tiles: {
+    width: 2,
+    height: 2,
+  },
+  geometry: {
+    width: 256,
+    height: 256,
+    border: 2,
+  },
+  debug: false,
+};
+
+export async function GenerateMosaic(files: string[], mosaicOptions: MosaicOptions, executor: Executor): Promise<void> {
+  Object.assign(options, mosaicOptions);
+  const debug = options.debug ? "-verbose" : "";
+  const geometry = `${options.geometry?.width}x${options.geometry?.height}+${options.geometry?.border}+${options.geometry?.border}`;
+  const tiles = `${options.tiles?.width}x${options.tiles?.height}`;
+
+  console.log(chalk.green(`➡️ Generating mosaic ${options.tiles?.width}x${options.tiles?.height} for files: ${files}`));
+  await executor(
+    `montage ${debug} -geometry "${geometry}" -tile "${tiles}" "${files.join('" "')}" "${options.outputPath}/mosaic_${options.scadFileName}.jpg"`,
+  );
+  console.log(chalk.green(`✅ Success generating mosaic`));
 }
