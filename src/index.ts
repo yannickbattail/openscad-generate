@@ -3,11 +3,13 @@
 import * as Commander from "commander";
 import { unicorn } from "./util/unicorn.js";
 import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./types.js";
-import { generate, getDefaultOpenscadOptions } from "./generation.js";
+import { generate } from "./generation.js";
+import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
+import { mergeDeep } from "./util/mergeDeep.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.1.1");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.1.2");
 
 program
   .command("generate")
@@ -30,9 +32,9 @@ program
     "",
   )
   .option(
-    "-c, --continueOnError <continueOnError>",
-    `continue on error (default: false). If true, it will continue to run even if a command (openscad, webp, imagemagic) fails.`,
-    "false",
+    "-c, --configFile <configFile>",
+    "Path to a config file with the parameters to use. If not provided, it will use the default parameters.",
+    "",
   )
   .option(
     "-j, --parallelJobs <parallelJobs>",
@@ -44,16 +46,22 @@ program
     `run in debug mode (default: false). If true, the command  and its output will be logged.`,
     false,
   )
-  .action((openscadFile, options) => {
-    const genOption: GenerateOptions = getDefaultOpenscadOptions();
+  .action(async (openscadFile, options) => {
+    let genOption: GenerateOptions = getDefaultOpenscadOptions();
+    if (options.configFile) {
+      const configFronFile = await loadConfig(options.configFile);
+      genOption = mergeDeep(genOption, configFronFile);
+      if (configFronFile.outFormats) genOption.outFormats = configFronFile.outFormats;
+    }
     genOption.fileName = openscadFile;
-    genOption.outFormats = toExportAllFormat(options.outFormats);
-    genOption.outputDir = options.outputDir ? options.outputDir : "./gen";
-    genOption.generateMosaic = !!options.mosaicFormat;
-    genOption.onlyParameterSet = options.onlyParameterSet;
-    genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
-    genOption.mosaicOptions.tiles = toMosaicFormat(options.mosaicFormat);
-    genOption.openScadOptions.debug = active(options.debugMode);
+    if (options.outFormats) genOption.outFormats = toExportAllFormat(options.outFormats);
+    if (options.outputDir) genOption.outputDir = options.outputDir;
+    if (options.mosaicFormat) genOption.generateMosaic = !!options.mosaicFormat;
+    if (options.onlyParameterSet) genOption.onlyParameterSet = options.onlyParameterSet;
+    if (options.parallelJobs) genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
+    if (options.mosaicFormat) genOption.mosaicOptions.tiles = toMosaicFormat(options.mosaicFormat);
+    if (options.debugMode) genOption.openScadOptions.debug = active(options.debugMode);
+    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
     return generate(genOption);
   });
 

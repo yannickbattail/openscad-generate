@@ -1,22 +1,22 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`generation > getOpenscadOptions 1`] = `
 {
   "fileName": "",
+  "outputDir": "./gen",
+  "outFormats": ["png", "webp", "3mf"],
+  "parallelJobs": 1,
+  "onlyParameterSet": "",
   "generateMosaic": false,
   "mosaicOptions": {
-    "debug": false,
     "geometry": {
-      "border": 2,
-      "height": 256,
       "width": 256,
+      "height": 256,
+      "border": 2
     },
     "tiles": {
-      "height": 2,
       "width": 2,
+      "height": 2
     },
+    "debug": false
   },
-  "onlyParameterSet": "",
   "openScadOptions": {
     "animOptions": {
       "animDelay": 50,
@@ -28,13 +28,13 @@ exports[`generation > getOpenscadOptions 1`] = `
       "csglimit": null,
       "imgsize": {
         "height": 512,
-        "width": 515,
+        "width": 515
       },
       "preview": null,
       "projection": null,
       "render": null,
       "view": null,
-      "viewall": false,
+      "viewall": false
     },
     "backend": "Manifold",
     "check_parameter_ranges": false,
@@ -48,7 +48,7 @@ exports[`generation > getOpenscadOptions 1`] = `
       "python_engine": false,
       "roof": true,
       "textmetrics": true,
-      "vertex_object_renderers_indexing": true,
+      "vertex_object_renderers_indexing": true
     },
     "hardwarnings": false,
     "imageOptions": {
@@ -58,13 +58,13 @@ exports[`generation > getOpenscadOptions 1`] = `
       "csglimit": null,
       "imgsize": {
         "height": 1024,
-        "width": 1024,
+        "width": 1024
       },
       "preview": null,
       "projection": null,
       "render": null,
       "view": null,
-      "viewall": false,
+      "viewall": false
     },
     "openScadExecutable": "openscad",
     "option3mf": {
@@ -79,18 +79,10 @@ exports[`generation > getOpenscadOptions 1`] = `
       "meta_data_license_terms": "",
       "meta_data_rating": "",
       "meta_data_title": "",
-      "unit": "millimeter",
+      "unit": "millimeter"
     },
     "python_module": null,
     "quiet": false,
-    "trust_python": false,
-  },
-  "outFormats": [
-    "png",
-    "webp",
-    "3mf",
-  ],
-  "outputDir": "./gen",
-  "parallelJobs": 1,
+    "trust_python": false
+  }
 }
-`;
