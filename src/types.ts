@@ -16,18 +16,17 @@ export type ExportAllFormat = Export3dFormat | Export2dFormat | GeneratedFormat;
 export const defaultFormats = [Export2dFormat.png, GeneratedFormat.webp, Export3dFormat["3mf"]];
 
 export interface GenerateOptions {
+  fileName: string;
+  outputDir: string;
   outFormats: ExportAllFormat[];
   onlyParameterSet: string;
   parallelJobs: number;
   generateMosaic: boolean;
-  fileName: string;
   mosaicOptions: MosaicOptions;
   openScadOptions: IOpenScadOptions;
 }
 
 export interface MosaicOptions {
-  scadFileName: string;
-  outputPath: string;
   geometry?: {
     width: number;
     height: number;

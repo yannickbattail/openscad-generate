@@ -12,16 +12,15 @@ import { GenerateMosaic } from "./util/MosaicGeneration.js";
 export function getDefaultOpenscadOptions(): GenerateOptions {
   return {
     fileName: "",
+    outputDir: "./gen",
     outFormats: defaultFormats,
     parallelJobs: 1,
     onlyParameterSet: "",
     generateMosaic: false,
     mosaicOptions: {
-      scadFileName: "",
-      outputPath: "",
       geometry: {
-        width: 1024,
-        height: 1024,
+        width: 256,
+        height: 256,
         border: 2,
       },
       tiles: {
@@ -102,17 +101,15 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
 }
 
 export async function generate(genOptions: GenerateOptions) {
-  console.log(`GenerateMosaic for file:`, genOptions);
-  const outputDir = "./gen";
   const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
   const limiter: LimitFunction = pLimit(genOptions.parallelJobs);
   console.log(chalk.green(`Generating model for file: ${genOptions.fileName} in formats: ${genOptions.outFormats}`));
 
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
+  if (!fs.existsSync(genOptions.outputDir)) {
+    fs.mkdirSync(genOptions.outputDir);
   }
 
-  const openscad = new OpenScad(genOptions.fileName, outputDir, executor);
+  const openscad = new OpenScad(genOptions.fileName, genOptions.outputDir, executor);
   try {
     const { parameterSetFileName, paramSetToGenerate } = fetchParameterSets(genOptions);
     const tasks: Promise<OpenScadOutputWithSummary>[] = paramSetToGenerate
@@ -136,7 +133,7 @@ export async function generate(genOptions: GenerateOptions) {
     const result = await Promise.all(tasks);
     if (genOptions.generateMosaic) {
       const pngFiles = getPngResult(result);
-      await GenerateMosaic(pngFiles, genOptions.mosaicOptions, executor);
+      await GenerateMosaic(pngFiles, genOptions, executor);
     }
   } catch (error) {
     console.error("Error reading or parsing the JSON file:", error);

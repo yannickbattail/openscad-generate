@@ -46,9 +46,9 @@ program
     genOption.generateMosaic = !!options.mosaicFormat;
     genOption.onlyParameterSet = options.onlyParameterSet;
     genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
-    genOption.mosaicOptions.geometry = toMosaicFormat(options.mosaicFormat);
-    genOption.openScadOptions.debug = "" + active(options.debugMode);
-
+    genOption.mosaicOptions.tiles = toMosaicFormat(options.mosaicFormat);
+    genOption.openScadOptions.debug = active(options.debugMode);
+    // genOption.outputDir = "./gen";
     return generate(genOption);
   });
 
@@ -61,7 +61,6 @@ program
 program.parse();
 
 function toExportAllFormat(formats: string): ExportAllFormat[] {
-  console.log(`base formats: ${formats}`);
   if (!formats) return defaultFormats;
   const values = formats.split(",").map((v) => v.trim());
   const invalid = values.filter((v) => !allFormats.includes(v));
@@ -80,7 +79,6 @@ function toMosaicFormat(value: string):
   | {
       width: number;
       height: number;
-      border: number;
     }
   | undefined {
   if (!value) return undefined;
@@ -88,7 +86,6 @@ function toMosaicFormat(value: string):
   return {
     width: parseInt(val[0]),
     height: parseInt(val[1]),
-    border: 2,
   };
 }
 

@@ -1,31 +1,18 @@
 import { Executor } from "openscad-cli-wrapper";
 import chalk from "chalk";
-import { MosaicOptions } from "../types.js";
+import { GenerateOptions } from "../types.js";
+import path from "node:path";
 
-const options: MosaicOptions = {
-  scadFileName: "model",
-  outputPath: "./gen",
-  tiles: {
-    width: 2,
-    height: 2,
-  },
-  geometry: {
-    width: 256,
-    height: 256,
-    border: 2,
-  },
-  debug: false,
-};
-
-export async function GenerateMosaic(files: string[], mosaicOptions: MosaicOptions, executor: Executor): Promise<void> {
-  Object.assign(options, mosaicOptions);
-  const debug = options.debug ? "-verbose" : "";
-  const geometry = `${options.geometry?.width}x${options.geometry?.height}+${options.geometry?.border}+${options.geometry?.border}`;
-  const tiles = `${options.tiles?.width}x${options.tiles?.height}`;
-
-  console.log(chalk.green(`➡️ Generating mosaic ${options.tiles?.width}x${options.tiles?.height} for files: ${files}`));
-  await executor(
-    `montage ${debug} -geometry "${geometry}" -tile "${tiles}" "${files.join('" "')}" "${options.outputPath}/mosaic_${options.scadFileName}.jpg"`,
+export async function GenerateMosaic(files: string[], genOptions: GenerateOptions, executor: Executor): Promise<void> {
+  const debug = genOptions.openScadOptions.debug ? "-verbose" : "";
+  const geometry = `${genOptions.mosaicOptions.geometry?.width}x${genOptions.mosaicOptions.geometry?.height}+${genOptions.mosaicOptions.geometry?.border}+${genOptions.mosaicOptions.geometry?.border}`;
+  const tiles = `${genOptions.mosaicOptions.tiles?.width}x${genOptions.mosaicOptions.tiles?.height}`;
+  const mosaicFile = `${genOptions.outputDir}/mosaic_${path.parse(genOptions.fileName).name}.jpg`;
+  console.log(
+    chalk.green(
+      `➡️ Generating mosaic ${genOptions.mosaicOptions.tiles?.width}x${genOptions.mosaicOptions.tiles?.height} for files: ${files}`,
+    ),
   );
+  await executor(`montage ${debug} -geometry "${geometry}" -tile "${tiles}" "${files.join('" "')}" "${mosaicFile}"`);
   console.log(chalk.green(`✅ Success generating mosaic`));
 }
