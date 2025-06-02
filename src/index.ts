@@ -2,8 +2,8 @@
 
 import * as Commander from "commander";
 import { unicorn } from "./util/unicorn.js";
-import { allFormats, defaultFormats, ExportAllFormat } from "./types.js";
-import { generate } from "./generation.js";
+import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./types.js";
+import { generate, getDefaultOpenscadOptions } from "./generation.js";
 
 const program = new Commander.Command();
 
@@ -17,12 +17,12 @@ program
   .option(
     "-o, --outFormats <outFormats>",
     `list of outFormats (separated by coma) to refresh : (${allFormats.join(",")}). If not provided, all will be refreshed.`,
-    toExportAllFormat,
+    "",
   )
   .option(
     "-m, --mosaicFormat <mosaicFormat>",
     `Generate mosaic in the format WIDTH,HEIGHT of all parameterSets. Must have format png.`,
-    toMosaicFormat,
+    "",
   )
   .option(
     "-c, --continueOnError <continueOnError>",
@@ -32,23 +32,25 @@ program
   .option(
     "-j, --parallelJobs <parallelJobs>",
     `continue on error (default: false). If true, it will continue to run even if a command (openscad, webp, imagemagic) fails.`,
-    CheckParseInt,
+    "1",
   )
   .option(
     "-D, --debugMode <debugMode>",
     `run in debug mode (default: false). If true, the command  and its output will be logged.`,
-    active,
+    false,
   )
-  .action((openscadFile, options) =>
-    generate({
-      fileName: openscadFile,
-      outFormats: options.outFormats,
-      mosaicFormat: options.mosaicFormat,
-      onlyParameterSet: options.onlyParameterSet,
-      parallelJobs: options.parallelJobs ?? 1,
-      debugMode: options.debugMode,
-    }),
-  );
+  .action((openscadFile, options) => {
+    const genOption: GenerateOptions = getDefaultOpenscadOptions();
+    genOption.fileName = openscadFile;
+    genOption.outFormats = toExportAllFormat(options.outFormats);
+    genOption.generateMosaic = !!options.mosaicFormat;
+    genOption.onlyParameterSet = options.onlyParameterSet;
+    genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
+    genOption.mosaicOptions.geometry = toMosaicFormat(options.mosaicFormat);
+    genOption.openScadOptions.debug = "" + active(options.debugMode);
+
+    return generate(genOption);
+  });
 
 program
   .command("unicorn")
@@ -66,19 +68,19 @@ function toExportAllFormat(formats: string): ExportAllFormat[] {
   if (invalid.length) {
     throw new Error(`Invalid formats: ${invalid.join(", ")}`);
   }
-  return values as ExportAllFormat[];
+  return (values as ExportAllFormat[]) ?? defaultFormats;
 }
 
-function active(value: string): boolean {
-  return (
-    value.toLowerCase() === "true" || value.toLowerCase() === "on" || value.toLowerCase() === "yes" || value === "1"
-  );
+function active(v: string): boolean {
+  const value = ("" + v).toLowerCase();
+  return value === "true" || value === "on" || value === "yes" || value === "1";
 }
 
 function toMosaicFormat(value: string):
   | {
       width: number;
       height: number;
+      border: number;
     }
   | undefined {
   if (!value) return undefined;
@@ -86,6 +88,7 @@ function toMosaicFormat(value: string):
   return {
     width: parseInt(val[0]),
     height: parseInt(val[1]),
+    border: 2,
   };
 }
 

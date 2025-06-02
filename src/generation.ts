@@ -4,49 +4,109 @@ import chalk from "chalk";
 import pLimit, { LimitFunction } from "p-limit";
 
 import { createFctExecCommand } from "./util/execBash.js";
-import { defaultFormats, ExportAllFormat } from "./types.js";
-import { ColorScheme, OpenScad, OpenScadOptions, OpenScadOutputWithSummary, ParameterSet } from "openscad-cli-wrapper";
+import { defaultFormats, GenerateOptions } from "./types.js";
+import { ColorScheme, OpenScad, OpenScadOutputWithSummary, ParameterSet, precision, Unit } from "openscad-cli-wrapper";
 import { genParamSetInFormat } from "./generateFormat.js";
 import { GenerateMosaic } from "./util/MosaicGeneration.js";
 
-interface GenerateOptions {
-  fileName: string;
-  outFormats: ExportAllFormat[];
-  mosaicFormat?: {
-    width: number;
-    height: number;
+export function getDefaultOpenscadOptions(): GenerateOptions {
+  return {
+    fileName: "",
+    outFormats: defaultFormats,
+    parallelJobs: 1,
+    onlyParameterSet: "",
+    generateMosaic: false,
+    mosaicOptions: {
+      scadFileName: "",
+      outputPath: "",
+      geometry: {
+        width: 1024,
+        height: 1024,
+        border: 2,
+      },
+      tiles: {
+        width: 2,
+        height: 2,
+      },
+      debug: false,
+    },
+    openScadOptions: {
+      animOptions: {
+        animDelay: 50,
+        animate: 50,
+        animate_sharding: null,
+        autocenter: false,
+        camera: null,
+        colorscheme: ColorScheme.DeepOcean,
+        csglimit: null,
+        imgsize: {
+          height: 512,
+          width: 515,
+        },
+        preview: null,
+        projection: null,
+        render: null,
+        view: null,
+        viewall: false,
+      },
+      backend: "Manifold",
+      check_parameter_ranges: false,
+      check_parameters: false,
+      debug: null,
+      experimentalFeatures: {
+        import_function: true,
+        input_driver_dbus: false,
+        lazy_union: true,
+        predictible_output: true,
+        python_engine: false,
+        roof: true,
+        textmetrics: true,
+        vertex_object_renderers_indexing: true,
+      },
+      hardwarnings: false,
+      imageOptions: {
+        autocenter: false,
+        camera: null,
+        colorscheme: ColorScheme.DeepOcean,
+        csglimit: null,
+        imgsize: {
+          height: 1024,
+          width: 1024,
+        },
+        preview: null,
+        projection: null,
+        render: null,
+        view: null,
+        viewall: false,
+      },
+      openScadExecutable: "openscad",
+      option3mf: {
+        add_meta_data: "true",
+        color: "",
+        color_mode: "model",
+        decimal_precision: precision.c6,
+        material_type: "basematerial",
+        meta_data_copyright: "",
+        meta_data_description: "",
+        meta_data_designer: "",
+        meta_data_license_terms: "",
+        meta_data_rating: "",
+        meta_data_title: "",
+        unit: Unit.millimeter,
+      },
+      python_module: null,
+      quiet: false,
+      trust_python: false,
+    },
   };
-  onlyParameterSet: string;
-  parallelJobs: number;
-  debugMode: boolean;
-}
-
-export function getOpenscadOptions(): OpenScadOptions {
-  const options = new OpenScadOptions({});
-
-  options.imageOptions.imgsize = {
-    width: 1024,
-    height: 1024,
-  };
-  options.imageOptions.colorscheme = ColorScheme.DeepOcean;
-  options.animOptions.imgsize = {
-    width: 515,
-    height: 512,
-  };
-  options.animOptions.colorscheme = ColorScheme.DeepOcean;
-  options.animOptions.animate = 50;
-  options.animOptions.animDelay = 50;
-  return options;
 }
 
 export async function generate(genOptions: GenerateOptions) {
-  console.log(`GenerateMosaic for file: ${JSON.stringify(genOptions)}`);
+  console.log(`GenerateMosaic for file:`, genOptions);
   const outputDir = "./gen";
-  const options = getOpenscadOptions();
-  const formats = genOptions.outFormats ? genOptions.outFormats : defaultFormats;
-  const executor = createFctExecCommand(!genOptions.debugMode, genOptions.debugMode);
+  const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
   const limiter: LimitFunction = pLimit(genOptions.parallelJobs);
-  console.log(chalk.green(`Generating model for file: ${genOptions.fileName} in formats: ${formats}`));
+  console.log(chalk.green(`Generating model for file: ${genOptions.fileName} in formats: ${genOptions.outFormats}`));
 
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
@@ -57,7 +117,7 @@ export async function generate(genOptions: GenerateOptions) {
     const { parameterSetFileName, paramSetToGenerate } = fetchParameterSets(genOptions);
     const tasks: Promise<OpenScadOutputWithSummary>[] = paramSetToGenerate
       .map((paramSet) =>
-        formats.map((format) =>
+        genOptions.outFormats.map((format) =>
           limiter(async () =>
             genParamSetInFormat(
               format,
@@ -66,7 +126,7 @@ export async function generate(genOptions: GenerateOptions) {
                 parameterFile: parameterSetFileName,
                 parameterName: paramSet[0],
               },
-              options,
+              genOptions.openScadOptions,
               executor,
             ),
           ),
@@ -74,18 +134,9 @@ export async function generate(genOptions: GenerateOptions) {
       )
       .flat();
     const result = await Promise.all(tasks);
-    if (genOptions.mosaicFormat) {
+    if (genOptions.generateMosaic) {
       const pngFiles = getPngResult(result);
-      await GenerateMosaic(
-        pngFiles,
-        {
-          outputPath: outputDir,
-          scadFileName: path.parse(genOptions.fileName).name,
-          tiles: genOptions.mosaicFormat,
-          debug: genOptions.debugMode,
-        },
-        executor,
-      );
+      await GenerateMosaic(pngFiles, genOptions.mosaicOptions, executor);
     }
   } catch (error) {
     console.error("Error reading or parsing the JSON file:", error);

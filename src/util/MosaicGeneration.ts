@@ -1,20 +1,6 @@
 import { Executor } from "openscad-cli-wrapper";
 import chalk from "chalk";
-
-export type MosaicOptions = {
-  scadFileName: string;
-  outputPath: string;
-  geometry?: {
-    width: number;
-    height: number;
-    border: number;
-  };
-  tiles?: {
-    width: number;
-    height: number;
-  };
-  debug?: boolean;
-};
+import { MosaicOptions } from "../types.js";
 
 const options: MosaicOptions = {
   scadFileName: "model",

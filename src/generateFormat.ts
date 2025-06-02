@@ -3,8 +3,8 @@ import {
   Executor,
   Export2dFormat,
   Export3dFormat,
+  IOpenScadOptions,
   OpenScad,
-  OpenScadOptions,
   OpenScadOutputWithSummary,
   ParameterFileSet,
   ParameterSet,
@@ -18,7 +18,7 @@ export async function genParamSetInFormat(
   format: ExportAllFormat,
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
-  options: OpenScadOptions,
+  options: IOpenScadOptions,
   executor: Executor,
 ): Promise<OpenScadOutputWithSummary> {
   if (Object.values(Export2dFormat).includes(format as Export2dFormat)) {
@@ -35,7 +35,7 @@ export async function genParamSetInFormat(
 async function genImage(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
-  options: OpenScadOptions,
+  options: IOpenScadOptions,
 ): Promise<OpenScadOutputWithSummary> {
   console.log(chalk.green(`➡️ Generating image for parameter set: ${parameterFileSet.parameterName}`));
   const openScadOutputWithSummary = await openscad.generateImage(parameterFileSet, options);
@@ -46,7 +46,7 @@ async function genImage(
 async function genAnimation(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
-  options: OpenScadOptions,
+  options: IOpenScadOptions,
   executor: Executor,
 ): Promise<OpenScadOutputWithSummary> {
   console.log(chalk.green(`➡️ Generating animation for parameter set: ${parameterFileSet.parameterName}`));
@@ -67,7 +67,7 @@ async function genModel(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
   format: Export3dFormat,
-  options: OpenScadOptions,
+  options: IOpenScadOptions,
 ): Promise<OpenScadOutputWithSummary> {
   console.log(chalk.green(`➡️ Generating model for parameter set: ${parameterFileSet.parameterName}`));
   const openScadOutputWithSummary = await openscad.generateModel(parameterFileSet, format, options);

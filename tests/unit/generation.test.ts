@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getOpenscadOptions } from "../../src/generation.js";
+import { getDefaultOpenscadOptions } from "../../src/generation.js";
 
 describe("generation", () => {
   it("getOpenscadOptions", () => {
-    const openScad = getOpenscadOptions();
+    const openScad = getDefaultOpenscadOptions();
     expect(openScad).toMatchSnapshot();
   });
 });
