@@ -7,7 +7,7 @@ import { generate, getDefaultOpenscadOptions } from "./generation.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.0.8");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.1.1");
 
 program
   .command("generate")
@@ -15,8 +15,13 @@ program
   .argument("<openscadFile>", "string to split")
   .option("-p, --onlyParameterSet <ParameterSet>", "only generate this ParameterSet")
   .option(
-    "-o, --outFormats <outFormats>",
+    "-f, --outFormats <outFormats>",
     `list of outFormats (separated by coma) to refresh : (${allFormats.join(",")}). If not provided, all will be refreshed.`,
+    "",
+  )
+  .option(
+    "-o, --outputDir <outputDir>",
+    `Output directory where the generated files will be stored. If not provided, it will be "./gen".`,
     "",
   )
   .option(
@@ -43,12 +48,12 @@ program
     const genOption: GenerateOptions = getDefaultOpenscadOptions();
     genOption.fileName = openscadFile;
     genOption.outFormats = toExportAllFormat(options.outFormats);
+    genOption.outputDir = options.outputDir ? options.outputDir : "./gen";
     genOption.generateMosaic = !!options.mosaicFormat;
     genOption.onlyParameterSet = options.onlyParameterSet;
     genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
     genOption.mosaicOptions.tiles = toMosaicFormat(options.mosaicFormat);
     genOption.openScadOptions.debug = active(options.debugMode);
-    // genOption.outputDir = "./gen";
     return generate(genOption);
   });
 
