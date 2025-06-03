@@ -32,7 +32,7 @@ export async function generate(genOptions: GenerateOptions) {
                 parameterFile: parameterSetFileName,
                 parameterName: paramSet[0],
               },
-              genOptions.openScadOptions,
+              genOptions,
               executor,
             ),
           ),
