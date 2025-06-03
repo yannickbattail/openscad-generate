@@ -84,12 +84,21 @@ async function gen3mf(
   format: Export3dFormat,
   options: GenerateOptions,
 ): Promise<OpenScadOutputWithSummary> {
-  console.log(chalk.green(`➡️ Generating model for parameter set: ${parameterFileSet.parameterName}`));
   const newOptions = deepClone(options);
-  const baseName = path.parse(options.fileName).name;
-  newOptions.openScadOptions.option3mf.meta_data_title = `${baseName} - ${parameterFileSet.parameterName}`;
-  newOptions.openScadOptions.option3mf.meta_data_description = `${baseName} - ${parameterFileSet.parameterName} made with OpenSCAD`;
-  const openScadOutputWithSummary = await openscad.generateModel(parameterFileSet, format, newOptions.openScadOptions);
-  console.log(chalk.green(`✅ Success generating model for parameter set: ${parameterFileSet.parameterName}`));
-  return openScadOutputWithSummary;
+  const vars: Record<string, string> = {
+    FILE_NAME: path.parse(options.fileName).base,
+    BASE_FILE_NAME: path.parse(options.fileName).name,
+    PARAMETER_SET: parameterFileSet.parameterName,
+  };
+  const opt3mf = newOptions.openScadOptions.option3mf;
+  opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, vars);
+  opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, vars);
+  return genModel(openscad, parameterFileSet, format, newOptions);
+}
+
+function replaceVars(pattern: string, vars: Record<string, string>): string {
+  for (const [key, value] of Object.entries(vars)) {
+    pattern = pattern.replaceAll(`__${key}__`, value);
+  }
+  return pattern;
 }
