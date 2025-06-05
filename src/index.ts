@@ -6,16 +6,17 @@ import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./
 import { generate } from "./generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
+import { init } from "./init.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.1.4");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.1.5");
 
 program
   .command("generate")
   .description("generate from openscad file")
-  .argument("<openscadFile>", "string to split")
-  .option("-p, --onlyParameterSet <ParameterSet>", "only generate this ParameterSet")
+  .argument("<openscadFile>", "OpenSCAD file")
+  .option("-p, --onlyParameterSet <ParameterSet>", "only generate this ParameterSet", "")
   .option(
     "-f, --outFormats <outFormats>",
     `list of outFormats (separated by coma) to refresh : (${allFormats.join(",")}). If not provided, all will be refreshed.`,
@@ -49,9 +50,9 @@ program
   .action(async (openscadFile, options) => {
     let genOption: GenerateOptions = getDefaultOpenscadOptions();
     if (options.configFile) {
-      const configFronFile = await loadConfig(options.configFile);
-      genOption = mergeDeep(genOption, configFronFile);
-      if (configFronFile.outFormats) genOption.outFormats = configFronFile.outFormats;
+      const configFromFile = await loadConfig(options.configFile);
+      genOption = mergeDeep(genOption, configFromFile) as GenerateOptions;
+      if (configFromFile.outFormats) genOption.outFormats = configFromFile.outFormats;
     }
     genOption.fileName = openscadFile;
     if (options.outFormats) genOption.outFormats = toExportAllFormat(options.outFormats);
@@ -64,6 +65,17 @@ program
     if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
     return generate(genOption);
   });
+
+program
+  .command("init")
+  .description("init project with sample files")
+  .argument("<openscadFile>", "OpenSCAD file")
+  .option(
+    "-f, --force <force>",
+    `force overwrite existing files (default: false). If true, it will overwrite existing files. (use the Force Luke!)`,
+    false,
+  )
+  .action((openscadFile, options) => init(openscadFile, active(options.force)));
 
 program
   .command("unicorn")

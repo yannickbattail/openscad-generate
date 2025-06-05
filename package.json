@@ -1,7 +1,7 @@
 {
   "name": "openscad-generate",
   "description": "Generate 3D models, animations and images from OpenSCAD files",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "author": "XcinnaY",
   "maintainer": "XcinnaY",
   "license": "LGPL-3.0-or-later",
