@@ -1,7 +1,7 @@
 import { Export2dFormat, Export3dFormat, IOpenScadOptions } from "openscad-cli-wrapper";
 
 export enum GeneratedFormat {
-  jpg = "jpg",
+  gif = "gif",
   webp = "webp",
 }
 

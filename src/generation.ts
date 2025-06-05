@@ -21,7 +21,7 @@ export async function generate(genOptions: GenerateOptions) {
   const openscad = new OpenScad(genOptions.fileName, genOptions.outputDir, executor);
   try {
     const { parameterSetFileName, paramSetToGenerate } = fetchParameterSets(genOptions);
-    const tasks: Promise<OpenScadOutputWithSummary>[] = paramSetToGenerate
+    const tasks: Promise<OpenScadOutputWithSummary | null>[] = paramSetToGenerate
       .map((paramSet) =>
         genOptions.outFormats.map((format) =>
           limiter(async () =>
@@ -39,13 +39,20 @@ export async function generate(genOptions: GenerateOptions) {
         ),
       )
       .flat();
-    const result = await Promise.all(tasks);
+    const result = await Promise.allSettled(tasks);
+    for (const fail of result.filter((r) => r.status === "rejected").map((r) => r.reason)) {
+      console.error(chalk.red(`💥 Error generating parameter set`, fail));
+    }
     if (genOptions.generateMosaic) {
-      const pngFiles = getPngResult(result);
-      await GenerateMosaic(pngFiles, genOptions, executor);
+      const pngFiles = getPngResult(result.filter((r) => r.status === "fulfilled").map((r) => r.value));
+      if (pngFiles) {
+        await GenerateMosaic(pngFiles, genOptions, executor);
+      } else {
+        console.error("⚠️ No PNG files for generating mosaic. (you need to generate PNG images)");
+      }
     }
   } catch (error) {
-    console.error("Error reading or parsing the JSON file:", error);
+    console.error(`💥 Error generating parameter set`, error);
   }
 }
 
@@ -60,6 +67,9 @@ function fetchParameterSets(genOptions: GenerateOptions) {
   return { parameterSetFileName, paramSetToGenerate };
 }
 
-function getPngResult(result: OpenScadOutputWithSummary[]): string[] {
-  return result.filter((r) => r.file.endsWith(".png")).map((r) => r.file);
+function getPngResult(result: (OpenScadOutputWithSummary | null)[]): string[] {
+  return result
+    .filter((r) => r !== null)
+    .filter((r) => r.file.endsWith(".png"))
+    .map((r) => r.file);
 }
