@@ -24,6 +24,7 @@
   "dependencies": {
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
+    "json5": "^2.2.3",
     "openscad-cli-wrapper": "^1.3.5",
     "p-limit": "^6.2.0"
   },

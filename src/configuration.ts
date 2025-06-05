@@ -1,6 +1,7 @@
+import fs from "node:fs";
+import JSON5 from "json5";
 import { defaultFormats, GenerateOptions } from "./types.js";
 import { ColorScheme, precision, RecursivePartial, Unit } from "openscad-cli-wrapper";
-import fs from "node:fs";
 
 export function getDefaultOpenscadOptions(): GenerateOptions {
   return {
@@ -93,10 +94,10 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
   };
 }
 
-export async function loadConfig(configPath: string): Promise<GenerateOptions> {
+export async function loadConfig(configPath: string): Promise<RecursivePartial<GenerateOptions>> {
   if (!fs.existsSync(configPath)) {
     throw new Error(`Config file not found: ${configPath}`);
   }
   const configContent = fs.readFileSync(configPath, "utf-8");
-  return JSON.parse(configContent) satisfies RecursivePartial<GenerateOptions>;
+  return JSON5.parse(configContent) satisfies RecursivePartial<GenerateOptions>;
 }

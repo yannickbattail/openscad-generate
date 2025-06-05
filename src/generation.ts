@@ -8,6 +8,7 @@ import { GenerateOptions } from "./types.js";
 import { OpenScad, OpenScadOutputWithSummary, ParameterSet } from "openscad-cli-wrapper";
 import { genParamSetInFormat } from "./generateFormat.js";
 import { GenerateMosaic } from "./util/MosaicGeneration.js";
+import JSON5 from "json5";
 
 export async function generate(genOptions: GenerateOptions) {
   const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
@@ -60,7 +61,7 @@ function fetchParameterSets(genOptions: GenerateOptions) {
   const fileNameWithoutExtension = path.basename(genOptions.fileName, path.extname(genOptions.fileName));
   const parameterSetFileName = fileNameWithoutExtension + ".json";
   const fileContent = fs.readFileSync(fileNameWithoutExtension + ".json", "utf-8");
-  const parameterSet: ParameterSet = JSON.parse(fileContent) satisfies ParameterSet;
+  const parameterSet: ParameterSet = JSON5.parse(fileContent) satisfies ParameterSet;
   const paramSetToGenerate = Object.entries(parameterSet.parameterSets).filter(
     (paramSet) => !genOptions.onlyParameterSet || genOptions.onlyParameterSet === paramSet[0],
   );
