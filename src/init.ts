@@ -112,26 +112,23 @@ module ball(size) {
     }
   },
   "openScadOptions": {
-    "backend": "Manifold", // or "CGAL"
+    "openScadExecutable": "openscad", // or "openscad-nightly"
+    "backend": "Manifold", // "CGAL" (old/slow) or "Manifold" (new/fast)
     "check_parameter_ranges": false,
     "check_parameters": false,
-    "debug": null,
-    "openScadExecutable": "openscad", // or "openscad-nightly"
     "hardwarnings": false,
+    "debug": null,
     "imageOptions": {
       "colorscheme": "Starnight",//Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
       "imgsize": {
         "height": 1024,
         "width": 1024
       },
-      "autocenter": false, // adjust camera to look at object's center
-      "camera": null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+      "render": null, // for full geometry evaluation when exporting png
       "preview": null, // [=throwntogether] -for ThrownTogether preview png
       "projection": null, // "o" for ortho or "p" for perspective when exporting png
-      "render": null, // for full geometry evaluation when exporting png
-      "view": null, // "axes" | "crosshairs" | "edges" | "scales";
-      "viewall": false, // adjust camera to fit object
-      "csglimit": null // stop rendering at n CSG elements when exporting png
+      "view": null, // "axes" | "crosshairs" | "edges" | "scales"
+      "autocenter": false, // adjust camera to look at object's center
     },
     "animOptions": {
       "animDelay": 50, // delay in milliseconds between frames
@@ -141,21 +138,17 @@ module ball(size) {
         "height": 100,
         "width": 100
       },
-      "autocenter": false, // adjust camera to look at object's center
-      "camera": null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+      "render": null, // for full geometry evaluation when exporting png
       "preview": null, // [=throwntogether] -for ThrownTogether preview png
       "projection": null, // "o" for ortho or "p" for perspective when exporting png
-      "render": null, // for full geometry evaluation when exporting png
-      "view": null, // "axes" | "crosshairs" | "edges" | "scales";
-      "viewall": false, // adjust camera to fit object
-      "csglimit": null // stop rendering at n CSG elements when exporting png
+      "view": null, // "axes" | "crosshairs" | "edges" | "scales"
+      "autocenter": false, // adjust camera to look at object's center
     },
     "option3mf": {
       "color_mode": "model", // "model" | "none" | "selected_only".  Set to "model" useful if you want to export mutilple colors in a 3mf file
       "color": "",
       "material_type": "color", // "color" | "basematerial". Set to "color" useful if you want to export mutilple colors in a 3mf file
       "unit": "millimeter", //  micron, millimeter, centimeter, meter, inch, foot
-      "decimal_precision": "6", // between 0 and 16, the number of digits after the decimal point
       "add_meta_data": "true",
       "meta_data_copyright": "me 2025",
       "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from 'file __FILE_NAME__')",
