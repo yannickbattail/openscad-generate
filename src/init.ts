@@ -84,8 +84,22 @@ module ball(size) {
 
   const config = `{
   "outputDir": "./gen",
-  "outFormats": ["png", "webp", "3mf"],
-  "parallelJobs": 1,
+  "outFormats": [
+    "png",
+    "webp",
+//    "gif",
+//    "pdf",
+//    "svg",
+//    "dxf",
+    "3mf",
+//    "stl",
+//    "asciistl",
+//    "binstl",
+//    "off",
+//    "wrl",
+//    "amf",
+//    "pov",
+  ],
   "mosaicOptions": {
     "geometry": {
       "width": 256,
@@ -95,65 +109,53 @@ module ball(size) {
     "tiles": {
       "width": 2,
       "height": 2
-    },
-    "debug": false
+    }
   },
   "openScadOptions": {
-    "animOptions": {
-      "animDelay": 50,
-      "animate": 20,
-      "animate_sharding": null,
-      "autocenter": false,
-      "camera": null,
-      "colorscheme": "Starnight",
-      "csglimit": null,
-      "imgsize": {
-        "height": 100,
-        "width": 100
-      },
-      "preview": null,
-      "projection": null,
-      "render": null,
-      "view": null,
-      "viewall": false
-    },
-    "backend": "Manifold",
+    "backend": "Manifold", // or "CGAL"
     "check_parameter_ranges": false,
     "check_parameters": false,
     "debug": null,
-    "experimentalFeatures": {
-      "import_function": true,
-      "input_driver_dbus": false,
-      "lazy_union": true,
-      "predictible_output": true,
-      "python_engine": false,
-      "roof": true,
-      "textmetrics": true,
-      "vertex_object_renderers_indexing": true
-    },
+    "openScadExecutable": "openscad", // or "openscad-nightly"
     "hardwarnings": false,
     "imageOptions": {
-      "autocenter": false,
-      "camera": null,
-      "colorscheme": "Starnight",
-      "csglimit": null,
+      "colorscheme": "Starnight",//Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
       "imgsize": {
         "height": 1024,
         "width": 1024
       },
-      "preview": null,
-      "projection": null,
-      "render": null,
-      "view": null,
-      "viewall": false
+      "autocenter": false, // adjust camera to look at object's center
+      "camera": null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+      "preview": null, // [=throwntogether] -for ThrownTogether preview png
+      "projection": null, // "o" for ortho or "p" for perspective when exporting png
+      "render": null, // for full geometry evaluation when exporting png
+      "view": null, // "axes" | "crosshairs" | "edges" | "scales";
+      "viewall": false, // adjust camera to fit object
+      "csglimit": null // stop rendering at n CSG elements when exporting png
     },
-    "openScadExecutable": "openscad",
+    "animOptions": {
+      "animDelay": 50, // delay in milliseconds between frames
+      "animate": 20, // number of frames
+      "colorscheme": "Starnight",//Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
+      "imgsize": {
+        "height": 100,
+        "width": 100
+      },
+      "autocenter": false, // adjust camera to look at object's center
+      "camera": null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+      "preview": null, // [=throwntogether] -for ThrownTogether preview png
+      "projection": null, // "o" for ortho or "p" for perspective when exporting png
+      "render": null, // for full geometry evaluation when exporting png
+      "view": null, // "axes" | "crosshairs" | "edges" | "scales";
+      "viewall": false, // adjust camera to fit object
+      "csglimit": null // stop rendering at n CSG elements when exporting png
+    },
     "option3mf": {
-      "color_mode": "model",
+      "color_mode": "model", // "model" | "none" | "selected_only".  Set to "model" useful if you want to export mutilple colors in a 3mf file
       "color": "",
-      "material_type": "color",
-      "unit": "millimeter",
-      "decimal_precision": "6",
+      "material_type": "color", // "color" | "basematerial". Set to "color" useful if you want to export mutilple colors in a 3mf file
+      "unit": "millimeter", //  micron, millimeter, centimeter, meter, inch, foot
+      "decimal_precision": "6", // between 0 and 16, the number of digits after the decimal point
       "add_meta_data": "true",
       "meta_data_copyright": "me 2025",
       "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from 'file __FILE_NAME__')",
@@ -162,9 +164,13 @@ module ball(size) {
       "meta_data_rating": "",
       "meta_data_title": "__BASE_FILE_NAME__ - __PARAMETER_SET__"
     },
-    "python_module": null,
-    "quiet": false,
-    "trust_python": false
+    "experimentalFeatures": {
+      "import_function": true, // if enable import() reuturns the data
+      "lazy_union": true, // useful if you want to export mutilple models in a 3mf file (and mutiple colors)
+      "predictible_output": true,
+      "roof": true,
+      "textmetrics": true, // enables textmetrics() and fontmetrics() function
+    }
   }
 }
 `;

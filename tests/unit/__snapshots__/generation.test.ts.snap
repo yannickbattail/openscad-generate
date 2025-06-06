@@ -5,7 +5,6 @@ exports[`generation > getOpenscadOptions 1`] = `
   "fileName": "",
   "generateMosaic": false,
   "mosaicOptions": {
-    "debug": false,
     "geometry": {
       "border": 2,
       "height": 256,
@@ -20,15 +19,15 @@ exports[`generation > getOpenscadOptions 1`] = `
   "openScadOptions": {
     "animOptions": {
       "animDelay": 50,
-      "animate": 50,
+      "animate": 20,
       "animate_sharding": null,
       "autocenter": false,
       "camera": null,
-      "colorscheme": "DeepOcean",
+      "colorscheme": "Starnight",
       "csglimit": null,
       "imgsize": {
-        "height": 512,
-        "width": 515,
+        "height": 100,
+        "width": 100,
       },
       "preview": null,
       "projection": null,
@@ -39,7 +38,7 @@ exports[`generation > getOpenscadOptions 1`] = `
     "backend": "Manifold",
     "check_parameter_ranges": false,
     "check_parameters": false,
-    "debug": null,
+    "debug": false,
     "experimentalFeatures": {
       "import_function": true,
       "input_driver_dbus": false,
@@ -48,13 +47,13 @@ exports[`generation > getOpenscadOptions 1`] = `
       "python_engine": false,
       "roof": true,
       "textmetrics": true,
-      "vertex_object_renderers_indexing": true,
+      "vertex_object_renderers_indexing": false,
     },
     "hardwarnings": false,
     "imageOptions": {
       "autocenter": false,
       "camera": null,
-      "colorscheme": "DeepOcean",
+      "colorscheme": "Starnight",
       "csglimit": null,
       "imgsize": {
         "height": 1024,
@@ -73,10 +72,10 @@ exports[`generation > getOpenscadOptions 1`] = `
       "color_mode": "model",
       "decimal_precision": "6",
       "material_type": "color",
-      "meta_data_copyright": "",
-      "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")",
-      "meta_data_designer": "",
-      "meta_data_license_terms": "",
+      "meta_data_copyright": "me 2025",
+      "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from 'file __FILE_NAME__')",
+      "meta_data_designer": "me",
+      "meta_data_license_terms": "CC BY https://creativecommons.org/licenses/by/4.0/",
       "meta_data_rating": "",
       "meta_data_title": "__BASE_FILE_NAME__ - __PARAMETER_SET__",
       "unit": "millimeter",

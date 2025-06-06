@@ -1,16 +1,32 @@
 import fs from "node:fs";
 import JSON5 from "json5";
-import { defaultFormats, GenerateOptions } from "./types.js";
-import { ColorScheme, precision, RecursivePartial, Unit } from "openscad-cli-wrapper";
+import { GeneratedFormat, GenerateOptions } from "./types.js";
+import { ColorScheme, Export2dFormat, Export3dFormat, precision, RecursivePartial, Unit } from "openscad-cli-wrapper";
 
 export function getDefaultOpenscadOptions(): GenerateOptions {
   return {
     fileName: "",
-    outputDir: "./gen",
-    outFormats: defaultFormats,
-    parallelJobs: 1,
-    onlyParameterSet: "",
     generateMosaic: false,
+    onlyParameterSet: "",
+    parallelJobs: 1,
+    outputDir: "./gen",
+    outFormats: [
+      Export2dFormat.png,
+      //    ExportAllFormat.gif,
+      //    ExportAllFormat.pdf,
+      //    ExportAllFormat.svg,
+      //    ExportAllFormat.dxf,
+      GeneratedFormat.webp,
+      //GeneratedFormat.gif,
+      Export3dFormat["3mf"],
+      //    Export3dFormat.stl,
+      //    Export3dFormat.asciistl,
+      //    Export3dFormat.binstl,
+      //    Export3dFormat.off,
+      //    Export3dFormat.wrl,
+      //    Export3dFormat.amf,
+      //    Export3dFormat.pov,
+    ],
     mosaicOptions: {
       geometry: {
         width: 256,
@@ -21,75 +37,74 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         width: 2,
         height: 2,
       },
-      debug: false,
     },
     openScadOptions: {
-      animOptions: {
-        animDelay: 50,
-        animate: 50,
-        animate_sharding: null,
-        autocenter: false,
-        camera: null,
-        colorscheme: ColorScheme.DeepOcean,
-        csglimit: null,
-        imgsize: {
-          height: 512,
-          width: 515,
-        },
-        preview: null,
-        projection: null,
-        render: null,
-        view: null,
-        viewall: false,
-      },
-      backend: "Manifold",
+      backend: "Manifold", // or "CGAL"
       check_parameter_ranges: false,
       check_parameters: false,
-      debug: null,
-      experimentalFeatures: {
-        import_function: true,
-        input_driver_dbus: false,
-        lazy_union: true,
-        predictible_output: true,
-        python_engine: false,
-        roof: true,
-        textmetrics: true,
-        vertex_object_renderers_indexing: true,
-      },
+      debug: false,
+      openScadExecutable: "openscad", // or "openscad-nightly"
       hardwarnings: false,
+      quiet: false,
+      trust_python: false,
+      python_module: null,
       imageOptions: {
-        autocenter: false,
-        camera: null,
-        colorscheme: ColorScheme.DeepOcean,
-        csglimit: null,
+        colorscheme: ColorScheme.Starnight, //Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
         imgsize: {
           height: 1024,
           width: 1024,
         },
-        preview: null,
-        projection: null,
-        render: null,
-        view: null,
-        viewall: false,
+        autocenter: false, // adjust camera to look at object's center
+        camera: null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+        preview: null, // [=throwntogether] -for ThrownTogether preview png
+        projection: null, // "o" for ortho or "p" for perspective when exporting png
+        render: null, // for full geometry evaluation when exporting png
+        view: null, // "axes" | "crosshairs" | "edges" | "scales";
+        viewall: false, // adjust camera to fit object
+        csglimit: null, // stop rendering at n CSG elements when exporting png
       },
-      openScadExecutable: "openscad",
+      animOptions: {
+        animDelay: 50, // delay in milliseconds between frames
+        animate: 20, // number of frames
+        colorscheme: ColorScheme.Starnight, //Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
+        imgsize: {
+          height: 100,
+          width: 100,
+        },
+        autocenter: false, // adjust camera to look at object's center
+        camera: null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+        preview: null, // [=throwntogether] -for ThrownTogether preview png
+        projection: null, // "o" for ortho or "p" for perspective when exporting png
+        render: null, // for full geometry evaluation when exporting png
+        view: null, // "axes" | "crosshairs" | "edges" | "scales";
+        viewall: false, // adjust camera to fit object
+        csglimit: null,
+        animate_sharding: null,
+      },
       option3mf: {
-        add_meta_data: "true",
+        color_mode: "model", // "model" | "none" | "selected_only".  Set to "model" useful if you want to export mutilple colors in a 3mf file
         color: "",
-        color_mode: "model",
+        material_type: "color", // "color" | "basematerial". Set to "color" useful if you want to export mutilple colors in a 3mf file
+        unit: Unit.millimeter,
         decimal_precision: precision.c6,
-        material_type: "color",
-        meta_data_copyright: "",
-        meta_data_description: '__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")',
-        meta_data_designer: "",
-        meta_data_license_terms: "",
+        add_meta_data: "true",
+        meta_data_copyright: "me 2025",
+        meta_data_description: "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from 'file __FILE_NAME__')",
+        meta_data_designer: "me",
+        meta_data_license_terms: "CC BY https://creativecommons.org/licenses/by/4.0/",
         meta_data_rating: "",
         meta_data_title: "__BASE_FILE_NAME__ - __PARAMETER_SET__",
-        unit: Unit.millimeter,
       },
-      python_module: null,
-      quiet: false,
-      trust_python: false,
+      experimentalFeatures: {
+        import_function: true, // if enable import() reuturns the data
+        lazy_union: true, // useful if you want to export mutilple models in a 3mf file (and mutiple colors)
+        predictible_output: true,
+        roof: true,
+        textmetrics: true,
+        input_driver_dbus: false,
+        vertex_object_renderers_indexing: false,
+        python_engine: false,
+      },
     },
   };
 }
