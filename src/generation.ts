@@ -13,7 +13,7 @@ import JSON5 from "json5";
 export async function generate(genOptions: GenerateOptions) {
   const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
   const limiter: LimitFunction = pLimit(genOptions.parallelJobs);
-  console.log(chalk.green(`Generating model for file: ${genOptions.fileName} in formats: ${genOptions.outFormats}`));
+  console.log(chalk.green(`🚀 Generating model for file: ${genOptions.fileName} in formats: ${genOptions.outFormats}`));
 
   if (!fs.existsSync(genOptions.outputDir)) {
     fs.mkdirSync(genOptions.outputDir);
