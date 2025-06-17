@@ -7,7 +7,7 @@ export function init(openscadFile: string, force: boolean) {
   const filesContent = getFilesContent(filePath.name);
   writeFile(`${filePath.dir || "."}/${filePath.name}.scad`, filesContent.openscad, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.json`, filesContent.preset, force);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.config.json`, filesContent.config, force);
+  writeFile(`${filePath.dir || "."}/${filePath.name}.json5`, filesContent.config, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
 }
 
@@ -188,31 +188,25 @@ here: https://github.com/.../...
 
 ## Generate
 
-Command to generate for all the presets:
-- png image
-- webp animation
-- 3mf 3D model
-- mosaic of all the presets
+Command to generate for all the presets: png image, webp animation, 3mf 3D model and mosaic of all the presets
 
 \`\`\`bash
-npx openscad-generate generate --outFormats png,webp,3mf --mosaicFormat 2,2 --configFile ${baseFile}.config.json ./${baseFile}.scad
+npx openscad-generate@latest generate --outFormats png,webp,3mf --mosaicFormat 2,2 --configFile ${baseFile}.json5 ./${baseFile}.scad
 \`\`\`
 
-More formats can be use: stl,asciistl,binstl,off,wrl,amf,3mf,pov,dxf,svg,pdf,png,gif,webp
+You can add the option \`--parallelJobs 7\` before the .scad file to generate in parallel. (optimal number is your CPU number of cores minus 1)
 
-You can use the option \`--parallelJobs 7\` to generate in parallel. (optimal number is your CPU cores minus 1)
-
-You need nodejs, imagemagick, webp and of course openscad-nightly installed.
+Doc of [openscad-generate](https://github.com/yannickbattail/openscad-generate)
 
 ## License
 
-license GPL
+[GPL](https://www.gnu.org/licenses/gpl-3.0.html)
 
-CC BY https://creativecommons.org/licenses/by/4.0/
+[CC BY](https://creativecommons.org/licenses/by/4.0/)
 
 ## keywords
 
-sample, openscad, 3D model, customizable, customizer
+sample, openscad, customizable, customizer
 `;
 
   return {
