@@ -7,6 +7,7 @@ import { generate } from "./generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
 import { init } from "./init.js";
+import { uploadThingiverse } from "./uploadThingiverse.js";
 
 const program = new Commander.Command();
 
@@ -76,6 +77,12 @@ program
     false,
   )
   .action((openscadFile, options) => init(openscadFile, active(options.force)));
+
+program
+  .command("upload")
+  .description("upload project to thingiverse")
+  .argument("<openscadFile>", "OpenSCAD file")
+  .action((openscadFile) => uploadThingiverse(openscadFile));
 
 program
   .command("unicorn")
