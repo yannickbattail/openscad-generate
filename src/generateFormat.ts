@@ -70,9 +70,19 @@ async function genAnimation(
   const out = await openscad.generateAnimation(paramSetName, options.openScadOptions);
   let outAnim: OpenScadOutputWithSummary;
   if (format === GeneratedFormat.webp) {
-    outAnim = await GenerateWebpAnimation(out, options.openScadOptions.animOptions?.animDelay ?? 100, executor);
+    outAnim = await GenerateWebpAnimation(
+      out,
+      options.openScadOptions.animOptions?.animDelay ?? 100,
+      !!options.openScadOptions.debug,
+      executor,
+    );
   } else {
-    outAnim = await GenerateGifAnimation(out, options.openScadOptions.animOptions?.animDelay ?? 100, executor);
+    outAnim = await GenerateGifAnimation(
+      out,
+      options.openScadOptions.animOptions?.animDelay ?? 100,
+      !!options.openScadOptions.debug,
+      executor,
+    );
   }
   console.log(
     chalk.green(`✅ Success generating animation ${format} for parameter set: ${parameterFileSet.parameterName}`),
