@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import JSON5 from "json5";
+import * as yaml from "js-yaml";
 import { GeneratedFormat, GenerateOptions } from "./types.js";
 import { ColorScheme, Export2dFormat, Export3dFormat, precision, RecursivePartial, Unit } from "openscad-cli-wrapper";
 
@@ -89,7 +89,7 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         decimal_precision: precision.c6,
         add_meta_data: "true",
         meta_data_copyright: "me 2025",
-        meta_data_description: "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from 'file __FILE_NAME__')",
+        meta_data_description: `__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")`,
         meta_data_designer: "me",
         meta_data_license_terms: "CC BY https://creativecommons.org/licenses/by/4.0/",
         meta_data_rating: "",
@@ -114,5 +114,5 @@ export async function loadConfig(configPath: string): Promise<RecursivePartial<G
     throw new Error(`Config file not found: ${configPath}`);
   }
   const configContent = fs.readFileSync(configPath, "utf-8");
-  return JSON5.parse(configContent) satisfies RecursivePartial<GenerateOptions>;
+  return yaml.load(configContent) as RecursivePartial<GenerateOptions>;
 }

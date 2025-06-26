@@ -73,7 +73,7 @@ exports[`generation > getOpenscadOptions 1`] = `
       "decimal_precision": "6",
       "material_type": "color",
       "meta_data_copyright": "me 2025",
-      "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from 'file __FILE_NAME__')",
+      "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")",
       "meta_data_designer": "me",
       "meta_data_license_terms": "CC BY https://creativecommons.org/licenses/by/4.0/",
       "meta_data_rating": "",

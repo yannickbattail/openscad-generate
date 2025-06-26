@@ -14,7 +14,6 @@ import fs from "node:fs";
 import { GenerateGifAnimation, GenerateWebpAnimation } from "./util/AnimationGeneration.js";
 import { deepClone } from "./util/deepClone.js";
 import path from "node:path";
-import JSON5 from "json5";
 
 export async function genParamSetInFormat(
   format: ExportAllFormat,
@@ -61,7 +60,7 @@ async function genAnimation(
 ): Promise<OpenScadOutputWithSummary> {
   console.log(chalk.green(`➡️ Generating animation ${format} for parameter set: ${parameterFileSet.parameterName}`));
   const fileContent = fs.readFileSync(parameterFileSet.parameterFile, "utf-8");
-  const parameterSet = JSON5.parse(fileContent) satisfies ParameterSet as ParameterSet;
+  const parameterSet = JSON.parse(fileContent) satisfies ParameterSet as ParameterSet;
   parameterSet.parameterSets[parameterFileSet.parameterName]["animation_rotation"] = "true";
   const paramSetName: ParameterSetName = {
     parameterSet: parameterSet,
