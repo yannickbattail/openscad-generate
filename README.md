@@ -12,7 +12,7 @@ It generates for all the presets:
 More formats can be use: stl,asciistl,binstl,off,wrl,amf,3mf,pov,dxf,svg,pdf,png,gif,webp
 
 ```bash
-npx openscad-generate@latest generate --outFormats png,webp,3mf --configFile ${baseFile}.json5 ./${baseFile}.scad
+npx openscad-generate@latest generate --outFormats png,webp,3mf --configFile ${baseFile}.yaml ./${baseFile}.scad
 ```
 
 Add the option \`--mosaicFormat 2,2 \` to generate a mosaic 2 rows, 2 lines.
@@ -39,5 +39,5 @@ Install [openscad-nightly](https://openscad.org/downloads.html#snapshots-linux-d
 npm run build
 CLI_DIR=$(pwd)
 cd the openscad project
-${CLI_DIR}/generate.sh generate --outFormats png,webp,3mf --mosaicFormat 4,4 --configFile OPENSCAD_FILE.json5 -j 1 ./OPENSCAD_FILE.scad
+${CLI_DIR}/generate.sh generate --outFormats png,webp,3mf --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 ./OPENSCAD_FILE.scad
 ```

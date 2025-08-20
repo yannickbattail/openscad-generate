@@ -23,8 +23,10 @@ export async function genParamSetInFormat(
   executor: Executor,
 ): Promise<OpenScadOutputWithSummary | null> {
   try {
-    if (Object.values(Export2dFormat).includes(format as Export2dFormat)) {
+    if (format === Export2dFormat.png) {
       return genImage(openscad, parameterFileSet, options);
+    } else if (Object.values(Export2dFormat).includes(format as Export2dFormat)) {
+      return gen2D(openscad, parameterFileSet, format as Export2dFormat, options);
     } else if (format === GeneratedFormat.webp || format === GeneratedFormat.gif) {
       return genAnimation(openscad, parameterFileSet, format, options, executor);
     } else if (format === Export3dFormat["3mf"]) {
@@ -117,6 +119,27 @@ async function gen3mf(
   opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, vars);
   opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, vars);
   return genModel(openscad, parameterFileSet, format, newOptions);
+}
+
+async function gen2D(
+  openscad: OpenScad,
+  parameterFileSet: ParameterFileSet,
+  format: Export2dFormat,
+  options: GenerateOptions,
+): Promise<OpenScadOutputWithSummary> {
+  const newOptions = deepClone(options);
+  const vars: Record<string, string> = {
+    FILE_NAME: path.parse(options.fileName).base,
+    BASE_FILE_NAME: path.parse(options.fileName).name,
+    PARAMETER_SET: parameterFileSet.parameterName,
+  };
+  const optPdf = newOptions.openScadOptions.optionPdf;
+  optPdf.meta_data_title = replaceVars(optPdf.meta_data_title, vars);
+  optPdf.meta_data_subject = replaceVars(optPdf.meta_data_subject, vars);
+  console.log(chalk.green(`➡️ Generating document for parameter set: ${parameterFileSet.parameterName}`));
+  const openScadOutputWithSummary = await openscad.generate2d(parameterFileSet, format, options.openScadOptions);
+  console.log(chalk.green(`✅ Success generating document for parameter set: ${parameterFileSet.parameterName}`));
+  return openScadOutputWithSummary;
 }
 
 function replaceVars(pattern: string, vars: Record<string, string>): string {

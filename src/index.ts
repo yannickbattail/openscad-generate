@@ -10,7 +10,7 @@ import { init } from "./init.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.1.9");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.2.1");
 
 program
   .command("generate")
