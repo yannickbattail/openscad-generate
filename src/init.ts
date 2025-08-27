@@ -28,7 +28,7 @@ part = "ball"; // [all, ball, stick]
 // size of the model
 size=50; // [10:5:100]
 
-/* [Animation] */
+/* [resolution] */
 // resolution
 $fn=10;
 
@@ -43,44 +43,48 @@ $vpr = is_animated?[60, 0, animation_rotation?(365 * $t):45]:$vpr;  // animation
 $vpd = is_animated?200:$vpd;
 
 if (part == "ball") {
-    ball(size);
+  ball(size);
 } else if (part == "stick") {
-    stick(size);
+  stick(size);
 } else {
-    ball(size);
-    stick(size);
+  ball(size);
+  stick(size);
 }
 
 module stick(size) {
-    color("green") rotate([0, 90, 0]) cylinder(d=size/2, h=size * 1.25, center=true);
+  color("green")
+    rotate([0, 90, 0])
+      cylinder(d=size/2, h=size * 1.25, center=true);
 }
 
 module ball(size) {
-    difference() {
-        sphere(d=size);
-        cylinder(d=size/2, h=size * 1.25, center=true);
-        #rotate([90, 0, 0]) cylinder(d=size/2, h=size * 1.25, center=true);
-        stick(size);
-    }
-}`;
+  difference() {
+    sphere(d=size);
+    cylinder(d=size/2, h=size * 1.25, center=true);
+    #rotate([90, 0, 0]) cylinder(d=size/2, h=size * 1.25, center=true);
+    stick(size);
+  }
+}
+`;
 
   const preset = `{
   "parameterSets": {
-  "all_20": {
-    "part": "all",
+    "all_20": {
+      "part": "all",
       "size": "20"
-  },
-  "ball_50": {
-    "part": "ball",
+    },
+    "ball_50": {
+      "part": "ball",
       "size": "50"
-  },
-  "stick_50": {
-    "part": "stick",
+    },
+    "stick_50": {
+      "part": "stick",
       "size": "50"
-  }
-},
+    }
+  },
   "fileFormatVersion": "1"
-}`;
+}
+`;
 
   const config = `
 outputDir: ./gen
@@ -108,7 +112,7 @@ mosaicOptions:
     width: 2
     height: 2
 openScadOptions:
-  openScadExecutable: openscad # or "openscad-nightly"
+  openScadExecutable: openscad-nightly # or "openscad"
   backend: Manifold # "CGAL" (old/slow) or "Manifold" (new/fast)
   check_parameter_ranges: false
   check_parameters: false
@@ -129,8 +133,8 @@ openScadOptions:
     animate: 20 # number of frames
     colorscheme: Starnight # Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
     imgsize:
-      height: 100
-      width: 100
+      height: 256
+      width: 256
     render: null # for full geometry evaluation when exporting png
     preview: null # [=throwntogether] -for ThrownTogether preview png
     projection: null # "o" for ortho or "p" for perspective when exporting png
@@ -189,6 +193,15 @@ ${baseFile} sample openscad model inspired from the openscad logo.
 
 - v1: 1st design
 
+## How to print it
+
+Material: PLA, ABS ??? color ???
+
+Parts:
+- \`all\`: support Yes/No, rotate 180° color: yellow ???
+- \`ball\`: support Yes/No, rotate 0° color: blue ???
+- \`stick\`: support Yes/No, rotate 0° color: red ???
+
 ## Customizable variables
 
 - \`part\`: default "all", part to generate: all, ball, stick
@@ -210,6 +223,10 @@ npx openscad-generate@latest generate --outFormats png,webp,3mf --mosaicFormat 2
 You can add the option \`--parallelJobs 7\` before the .scad file to generate in parallel. (optimal number is your CPU number of cores minus 1)
 
 Doc of [openscad-generate](https://github.com/yannickbattail/openscad-generate)
+
+## Other interesting designs
+
+- [something](https://www.thingiverse.com/thing:0000000) ???
 
 ## License
 
