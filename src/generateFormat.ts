@@ -110,14 +110,9 @@ async function gen3mf(
   options: GenerateOptions,
 ): Promise<OpenScadOutputWithSummary> {
   const newOptions = deepClone(options);
-  const vars: Record<string, string> = {
-    FILE_NAME: path.parse(options.fileName).base,
-    BASE_FILE_NAME: path.parse(options.fileName).name,
-    PARAMETER_SET: parameterFileSet.parameterName,
-  };
   const opt3mf = newOptions.openScadOptions.option3mf;
-  opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, vars);
-  opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, vars);
+  opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, newOptions, parameterFileSet);
+  opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, newOptions, parameterFileSet);
   return genModel(openscad, parameterFileSet, format, newOptions);
 }
 
@@ -128,23 +123,31 @@ async function gen2D(
   options: GenerateOptions,
 ): Promise<OpenScadOutputWithSummary> {
   const newOptions = deepClone(options);
-  const vars: Record<string, string> = {
-    FILE_NAME: path.parse(options.fileName).base,
-    BASE_FILE_NAME: path.parse(options.fileName).name,
-    PARAMETER_SET: parameterFileSet.parameterName,
-  };
+
   const optPdf = newOptions.openScadOptions.optionPdf;
-  optPdf.meta_data_title = replaceVars(optPdf.meta_data_title, vars);
-  optPdf.meta_data_subject = replaceVars(optPdf.meta_data_subject, vars);
+  optPdf.meta_data_title = replaceVars(optPdf.meta_data_title, newOptions, parameterFileSet);
+  optPdf.meta_data_subject = replaceVars(optPdf.meta_data_subject, newOptions, parameterFileSet);
   console.log(chalk.green(`➡️ Generating document for parameter set: ${parameterFileSet.parameterName}`));
   const openScadOutputWithSummary = await openscad.generate2d(parameterFileSet, format, options.openScadOptions);
   console.log(chalk.green(`✅ Success generating document for parameter set: ${parameterFileSet.parameterName}`));
   return openScadOutputWithSummary;
 }
 
-function replaceVars(pattern: string, vars: Record<string, string>): string {
+function replaceVars(pattern: string, options: GenerateOptions, parameterFileSet: ParameterFileSet): string {
+  const vars: Record<string, string> = {
+    FILE_NAME: path.parse(options.fileName).base,
+    BASE_FILE_NAME: path.parse(options.fileName).name,
+    PARAMETER_SET: parameterFileSet.parameterName,
+    GENERATION_DATE: new Date().toISOString(),
+    PARAMETERS: JSON.stringify(getParamSet(parameterFileSet), null, 0),
+  };
   for (const [key, value] of Object.entries(vars)) {
     pattern = pattern.replaceAll(`__${key}__`, value);
   }
   return pattern;
+}
+
+function getParamSet(parameterFileSet: ParameterFileSet) {
+  const parameterSet = JSON.parse(fs.readFileSync(parameterFileSet.parameterFile, "utf8")) as ParameterSet;
+  return parameterSet.parameterSets[parameterFileSet.parameterName];
 }

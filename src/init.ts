@@ -141,17 +141,24 @@ openScadOptions:
     view: null # "axes" | "crosshairs" | "edges" | "scales"
     autocenter: false # adjust camera to look at object's center
   option3mf:
-    color_mode: model # "model" | "none" | "selected_only".  Set to "model" useful if you want to export mutilple colors in a 3mf file
+    color_mode: model # "model" | "none" | "selected_only".  Set to "model" useful if you want to export multiple colors in a 3mf file
     color: ""
-    material_type: color # "color" | "basematerial". Set to "color" useful if you want to export mutilple colors in a 3mf file
+    material_type: color # "color" | "basematerial". Set to "color" useful if you want to export multiple colors in a 3mf file
     unit: millimeter #  micron, millimeter, centimeter, meter, inch, foot
     add_meta_data: "true"
     meta_data_copyright: me 2025
-    meta_data_description: __BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")
+    # the following variables are replaced by their value when generating the file
+    # __FILE_NAME__: the openscad file name with extension
+    # __BASE_FILE_NAME__: the openscad file name without extension
+    # __PARAMETER_SET__: the parameter set name used to generate the file
+    # __GENERATION_DATE__: date of the generation
+    # __PARAMETERS__: values of the parameter set as a JSON string
+    meta_data_description: '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__'
     meta_data_designer: me
-    meta_data_license_terms: CC BY https://creativecommons.org/licenses/by/4.0/
+    meta_data_license_terms: 'CC BY https://creativecommons.org/licenses/by/4.0/'
     meta_data_rating: ""
-    meta_data_title: __BASE_FILE_NAME__ - __PARAMETER_SET__
+    # the variables are replaced by their value when generating the file
+    meta_data_title: '__BASE_FILE_NAME__ - __PARAMETER_SET__'
   optionPdf:
     paper_size: "a4"
     orientation: "portrait"
@@ -161,9 +168,11 @@ openScadOptions:
     show_grid: "false"
     grid_size: 10.0
     add_meta_data: "true"
-    meta_data_title: __BASE_FILE_NAME__ - __PARAMETER_SET__
+    # the variables are replaced by their value when generating the file
+    meta_data_title: '__BASE_FILE_NAME__ - __PARAMETER_SET__'
     meta_data_author: "me"
-    meta_data_subject: __BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")
+    # the variables are replaced by their value when generating the file
+    meta_data_subject: '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__'
     meta_data_keywords: "OpenSCAD, 2D model"
     fill: "false"
     fill_color: "black"
@@ -178,7 +187,7 @@ openScadOptions:
     stroke_width: 0.35
   experimentalFeatures:
     import_function: true # if enable import() returns the data
-    lazy_union: true # useful if you want to export mutilple models in a 3mf file (and mutiple colors)
+    lazy_union: true # useful if you want to export multiple models in a 3mf file (and multiple colors)
     predictible_output: true
     object_function: true # enables object(), is_object() and has_key() functions https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Objects
     roof: true
