@@ -10,7 +10,7 @@ import { init } from "./init.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.2.1");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.2.3");
 
 program
   .command("generate")
@@ -72,10 +72,15 @@ program
   .argument("<openscadFile>", "OpenSCAD file")
   .option(
     "-f, --force <force>",
-    `force overwrite existing files (default: false). If true, it will overwrite existing files. (use the Force Luke!)`,
+    `force overwrite existing files. If true, it will overwrite existing files. (use the Force Luke!)`,
     false,
   )
-  .action((openscadFile, options) => init(openscadFile, active(options.force)));
+  .option(
+    "-g, --add-generate-script <add-generate-script>",
+    `force overwrite existing files. If true, it will overwrite existing files. (use the Force Luke!)`,
+    false,
+  )
+  .action((openscadFile, options) => init(openscadFile, active(options.force), active(options.addGenerateScript)));
 
 program
   .command("unicorn")
