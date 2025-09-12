@@ -2,18 +2,22 @@ import path from "node:path";
 import fs from "node:fs";
 import chalk from "chalk";
 
-export function init(openscadFile: string, force: boolean) {
+export function init(openscadFile: string, force: boolean, addGenerateScript) {
   const filePath = path.parse(openscadFile);
   const filesContent = getFilesContent(filePath.name);
   writeFile(`${filePath.dir || "."}/${filePath.name}.scad`, filesContent.openscad, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.json`, filesContent.preset, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.yaml`, filesContent.config, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
+  if (addGenerateScript) {
+    writeFile(`${filePath.dir || "."}/generate_${filePath.name}.sh`, filesContent.generateScript, force);
+    writeFile(`${filePath.dir || "."}/.gitignore`, "gen\n", force);
+  }
 }
 
 function writeFile(filePath: string, content: string, force: boolean): void {
   if (fs.existsSync(filePath) && !force) {
-    console.warn(chalk.yellow(`File ${filePath} already exists. Use --force to overwrite.`));
+    console.warn(chalk.yellow(`💥 File ${filePath} already exists, skipped! Use the --force option to overwrite.`));
     return;
   }
   fs.writeFileSync(filePath, content);
@@ -248,10 +252,48 @@ Doc of [openscad-generate](https://github.com/yannickbattail/openscad-generate)
 sample, openscad, customizable, customizer
 `;
 
+  const generateScript = `#!/bin/bash
+
+mosaicLines=2
+mosaicColumns=2
+parallelJobs=2
+if command -v nproc >/dev/null 2>&1; then # check if the command nproc exists
+  parallelJobs=$(nproc --ignore=2)
+fi
+if ! [[ "$parallelJobs" =~ ^[1-9][0-9]*$ ]]; then # Validate that parallelJobs is a positive integer
+  parallelJobs=2
+fi
+
+echo "use \${parallelJobs} parallel jobs"
+
+npx openscad-generate@latest generate --mosaicFormat \${mosaicColumns},\${mosaicLines} --parallelJobs $parallelJobs --configFile ${baseFile}.yaml ./${baseFile}.scad
+status=$?
+
+# Notify user about the result
+if command -v notify-send >/dev/null 2>&1; then
+  if [ $status -eq 0 ]; then
+    notify-send -u normal "openscad-generate" "Generation of ${baseFile} finished successfully."
+  else
+    notify-send -u critical "cthulhu-lightsaber" "Generation of ${baseFile} FAILED with exit code $status."
+  fi
+else
+  # Fallback to stdout if notify-send isn't available
+  if [ $status -eq 0 ]; then
+    echo "[INFO] Generation of ${baseFile} finished successfully."
+  else
+    echo "[ERROR] Generation of ${baseFile} FAILED with exit code $status." >&2
+  fi
+fi
+
+exit $status
+
+`;
+
   return {
     openscad,
     preset,
     config,
     readme,
+    generateScript,
   };
 }
