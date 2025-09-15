@@ -1,4 +1,6 @@
-import { ExportAllFormat, GeneratedFormat, GenerateOptions } from "./types.js";
+import fs from "node:fs";
+import path from "node:path";
+import chalk from "chalk";
 import {
   Executor,
   Export2dFormat,
@@ -9,11 +11,10 @@ import {
   ParameterSet,
   ParameterSetName,
 } from "openscad-cli-wrapper";
-import chalk from "chalk";
-import fs from "node:fs";
+import { ExportAllFormat, GeneratedFormat, GenerateOptions } from "./types.js";
 import { GenerateGifAnimation, GenerateWebpAnimation } from "./util/AnimationGeneration.js";
 import { deepClone } from "./util/deepClone.js";
-import path from "node:path";
+import { Enhance3mf } from "./util/Enhance3mf.js";
 
 export async function genParamSetInFormat(
   format: ExportAllFormat,
@@ -113,7 +114,13 @@ async function gen3mf(
   const opt3mf = newOptions.openScadOptions.option3mf;
   opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, newOptions, parameterFileSet);
   opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, newOptions, parameterFileSet);
-  return genModel(openscad, parameterFileSet, format, newOptions);
+  const summary = await genModel(openscad, parameterFileSet, format, newOptions);
+  const enhance = new Enhance3mf(summary.file);
+  enhance.addThumbnail();
+  enhance.addModelFile(summary.modelFile);
+  enhance.addParameterSet(parameterFileSet);
+  enhance.save();
+  return summary;
 }
 
 async function gen2D(
@@ -123,7 +130,6 @@ async function gen2D(
   options: GenerateOptions,
 ): Promise<OpenScadOutputWithSummary> {
   const newOptions = deepClone(options);
-
   const optPdf = newOptions.openScadOptions.optionPdf;
   optPdf.meta_data_title = replaceVars(optPdf.meta_data_title, newOptions, parameterFileSet);
   optPdf.meta_data_subject = replaceVars(optPdf.meta_data_subject, newOptions, parameterFileSet);
