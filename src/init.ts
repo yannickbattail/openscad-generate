@@ -93,76 +93,121 @@ module ball(size) {
   const config = `
 outputDir: ./gen
 outFormats:
+  ### image
   - png
+  ### animation
   - webp
+  ### animation, old low quality
   # - gif
+  ### 2D doc, see section optionPdf
   # - pdf
+  ### 2D vectorial, see section optionSvg
   # - svg
+  ### 2D: Drawing Exchange Format, vectorial
   # - dxf
+  ### 3D, compressed format with colors and materials, see section option3mf
   - 3mf
+  ### 3D stl, ascii or binary depending on openscad configuration
   # - stl
+  ### 3D stl, ascii (text)
   # - asciistl
+  ### 3D stl, binary
   # - binstl
+  ### 3D: Object File Format
   # - off
+  ### 3D: Virtual Reality Modeling Language
   # - wrl
+  ### 3D: previous version or 3mf, use 3mf instead if possible
   # - amf
+  ### 3: POV-Ray Raytracing Format
   # - pov
 mosaicOptions:
   geometry:
+    ### dimensions of a tile
     width: 256
     height: 256
     border: 2
   tiles:
+    ### number of columns
     width: 2
+    ### number of lines
     height: 2
 openScadOptions:
+  ### executable location
   openScadExecutable: openscad-nightly # or "openscad"
-  backend: Manifold # "CGAL" (old/slow) or "Manifold" (new/fast)
+  ### backend engine: "Manifold" (new/fast) or "CGAL" (old/slow)
+  backend: Manifold
+  ### configure the parameter range check for builtin modules
   check_parameter_ranges: false
+  ### configure the parameter check for user modules and functions
   check_parameters: false
+  ### Stop on the first warning
   hardwarnings: false
+  ### special debug info - specify 'all' or a set of source file names
   debug: null
   imageOptions:
-    colorscheme: Starnight # Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
+    ### Cornfield, Metallic, Sunset, Starnight, BeforeDawn, Nature, DaylightGem, NocturnalGem, DeepOcean, Solarized, Tomorrow, TomorrowNight, ClearSky, Monotone
+    colorscheme: Starnight
     imgsize:
       height: 1024
       width: 1024
-    render: null # for full geometry evaluation when exporting png
-    preview: null # [=throwntogether] -for ThrownTogether preview png
-    projection: null # "o" for ortho or "p" for perspective when exporting png
-    view: null # "axes" | "crosshairs" | "edges" | "scales"
-    autocenter: false # adjust camera to look at object's center
+    ### for full geometry evaluation when exporting png
+    render: null
+    ### [=throwntogether] for ThrownTogether preview png
+    preview: null
+    ### "o" for ortho or "p" for perspective when exporting png
+    projection: "p"
+    ### "axes", "crosshairs", "edges", "scales" or null
+    view: null
+    ### adjust camera to look at object's center
+    autocenter: true
+    ### adjust camera to fit object
+    viewall: true
   animOptions:
-    animDelay: 50 # delay in milliseconds between frames
-    animate: 20 # number of frames
-    colorscheme: Starnight # Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
+    ### delay in milliseconds between frames
+    animDelay: 50
+    ### number of frames
+    animate: 20
+    ### Cornfield, Metallic, Sunset, Starnight, BeforeDawn, Nature, DaylightGem, NocturnalGem, DeepOcean, Solarized, Tomorrow, TomorrowNight, ClearSky, Monotone
+    colorscheme: Starnight
     imgsize:
-      height: 256
-      width: 256
-    render: null # for full geometry evaluation when exporting png
-    preview: null # [=throwntogether] -for ThrownTogether preview png
-    projection: null # "o" for ortho or "p" for perspective when exporting png
-    view: null # "axes" | "crosshairs" | "edges" | "scales"
-    autocenter: false # adjust camera to look at object's center
+      height: 300
+      width: 300
+    ### for full geometry evaluation when exporting png
+    render: null
+    ### [=throwntogether] for ThrownTogether preview png
+    preview: null
+    ### "o" for ortho or "p" for perspective when exporting png
+    projection: "p"
+    ### "axes", "crosshairs", "edges", "scales" or null
+    view: null
+    ### adjust camera to look at object's center
+    autocenter: false
+    ### adjust camera to fit object
+    viewall: false
   option3mf:
-    color_mode: model # "model" | "none" | "selected_only".  Set to "model" useful if you want to export multiple colors in a 3mf file
+    ### "model", "none" or "selected_only". Set to "model" useful if you want to export multiple colors in a 3mf file
+    color_mode: model
+    ### set model's for when color_mode=selected_only
     color: ""
-    material_type: color # "color" | "basematerial". Set to "color" useful if you want to export multiple colors in a 3mf file
-    unit: millimeter #  micron, millimeter, centimeter, meter, inch, foot
+    ### "color" | "basematerial". Set to "color" useful if you want to export multiple colors in a 3mf file
+    material_type: color
+    ###  micron, millimeter, centimeter, meter, inch, foot
+    unit: millimeter
+    ### add metadata in the 3mf file
     add_meta_data: "true"
     meta_data_copyright: me 2025
-    # the following variables are replaced by their value when generating the file
-    # __FILE_NAME__: the openscad file name with extension
-    # __BASE_FILE_NAME__: the openscad file name without extension
-    # __PARAMETER_SET__: the parameter set name used to generate the file
-    # __GENERATION_DATE__: date of the generation
-    # __PARAMETERS__: values of the parameter set as a JSON string
+    ### the following variables are replaced by their value when generating the file
+    #### __FILE_NAME__: the openscad file name with extension
+    #### __BASE_FILE_NAME__: the openscad file name without extension
+    #### __PARAMETER_SET__: the parameter set name used to generate the file
+    #### __GENERATION_DATE__: date of the generation
+    #### __PARAMETERS__: values of the parameter set as a JSON string
+    meta_data_title: '__BASE_FILE_NAME__ - __PARAMETER_SET__'
     meta_data_description: '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__'
     meta_data_designer: me
-    meta_data_license_terms: 'CC BY https://creativecommons.org/licenses/by/4.0/'
+    meta_data_license_terms: 'CC BY https://creativecommons.org/licenses/by/4.0/ GPL https://www.gnu.org/licenses/gpl-3.0.html'
     meta_data_rating: ""
-    # the variables are replaced by their value when generating the file
-    meta_data_title: '__BASE_FILE_NAME__ - __PARAMETER_SET__'
   optionPdf:
     paper_size: "a4"
     orientation: "portrait"
@@ -190,17 +235,25 @@ openScadOptions:
     stroke_color: "black"
     stroke_width: 0.35
   experimentalFeatures:
-    import_function: true # if enable import() returns the data
-    lazy_union: true # useful if you want to export multiple models in a 3mf file (and multiple colors)
+    ### Enable import() function returning data instead of geometry.
+    import_function: true
+    ### useful if you want to export multiple models in a 3mf file (and multiple colors)
+    lazy_union: true
+    ### Attempt to produce predictible, diffable outputs (e.g. sorting the STL, or remeshing in a determined order)
     predictible_output: true
-    object_function: true # enables object(), is_object() and has_key() functions https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Objects
+    ### enables object(), is_object() and has_key() functions https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Objects
+    object_function: true
+    ### enable roof()
     roof: true
-    textmetrics: true # enables textmetrics() and fontmetrics() function
+    ### Enable the textmetrics() and fontmetrics() functions.
+    textmetrics: true
 `;
 
   const readme = `# ${baseFile}
 
-${baseFile} sample openscad model inspired from the openscad logo.
+Description of ${baseFile} sample openscad model inspired from the openscad logo.
+
+SEARCH FOR ??? AND COMPLETE THE DOC
 
 ## UPDATE
 
@@ -215,6 +268,11 @@ Parts:
 - \`ball\`: support Yes/No, rotate 0° color: blue ???
 - \`stick\`: support Yes/No, rotate 0° color: red ???
 
+Other slicer options
+- infill: 20% ???
+- vase mode (Spiral): No ???
+- ...
+
 ## Customizable variables
 
 - \`part\`: default "all", part to generate: all, ball, stick
@@ -223,14 +281,14 @@ Parts:
 
 ## Sources
 
-here: https://github.com/.../...
+Sources available [here](https://github.com/.../...) ???
 
 ## Generate
 
 Command to generate for all the presets: png image, webp animation, 3mf 3D model and mosaic of all the presets
 
 \`\`\`bash
-npx openscad-generate@latest generate --outFormats png,webp,3mf --mosaicFormat 2,2 --configFile ${baseFile}.yaml ./${baseFile}.scad
+npx openscad-generate@latest generate --mosaicFormat 2,2 --configFile ${baseFile}.yaml ./${baseFile}.scad
 \`\`\`
 
 You can add the option \`--parallelJobs 7\` before the .scad file to generate in parallel. (optimal number is your CPU number of cores minus 1)
@@ -249,7 +307,7 @@ Doc of [openscad-generate](https://github.com/yannickbattail/openscad-generate)
 
 ## keywords
 
-sample, openscad, customizable, customizer
+openscad, customizable, customizer, ???
 `;
 
   const generateScript = `#!/bin/bash
@@ -274,7 +332,7 @@ if command -v notify-send >/dev/null 2>&1; then
   if [ $status -eq 0 ]; then
     notify-send -u normal "openscad-generate" "Generation of ${baseFile} finished successfully."
   else
-    notify-send -u critical "cthulhu-lightsaber" "Generation of ${baseFile} FAILED with exit code $status."
+    notify-send -u critical "openscad-generate" "Generation of ${baseFile} FAILED with exit code $status."
   fi
 else
   # Fallback to stdout if notify-send isn't available
