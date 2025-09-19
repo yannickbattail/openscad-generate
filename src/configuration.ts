@@ -10,6 +10,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
     onlyParameterSet: "",
     parallelJobs: 1,
     outputDir: "./gen",
+    embedThumbnailIn3mf: true,
+    embedSourcesIn3mf: true,
     outFormats: [
       Export2dFormat.png,
       //    ExportAllFormat.gif,
@@ -54,13 +56,13 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
           height: 1024,
           width: 1024,
         },
-        autocenter: false, // adjust camera to look at object's center
+        autocenter: true, // adjust camera to look at object's center
         camera: null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
         preview: null, // [=throwntogether] -for ThrownTogether preview png
-        projection: null, // "o" for ortho or "p" for perspective when exporting png
+        projection: "p", // "o" for ortho or "p" for perspective when exporting png
         render: null, // for full geometry evaluation when exporting png
         view: null, // "axes" | "crosshairs" | "edges" | "scales";
-        viewall: false, // adjust camera to fit object
+        viewall: true, // adjust camera to fit object
         csglimit: null, // stop rendering at n CSG elements when exporting png
       },
       animOptions: {
@@ -68,8 +70,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         animate: 20, // number of frames
         colorscheme: ColorScheme.Starnight, //Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
         imgsize: {
-          height: 100,
-          width: 100,
+          height: 300,
+          width: 300,
         },
         autocenter: false, // adjust camera to look at object's center
         camera: null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
@@ -89,9 +91,11 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         decimal_precision: precision.c6,
         add_meta_data: "true",
         meta_data_copyright: "me 2025",
-        meta_data_description: `__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")`,
+        meta_data_description:
+          '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__',
         meta_data_designer: "me",
-        meta_data_license_terms: "CC BY https://creativecommons.org/licenses/by/4.0/",
+        meta_data_license_terms:
+          "CC BY https://creativecommons.org/licenses/by/4.0/ GPL https://www.gnu.org/licenses/gpl-3.0.html",
         meta_data_rating: "",
         meta_data_title: "__BASE_FILE_NAME__ - __PARAMETER_SET__",
       },
@@ -106,7 +110,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         add_meta_data: "true",
         meta_data_title: "__BASE_FILE_NAME__ - __PARAMETER_SET__",
         meta_data_author: "me",
-        meta_data_subject: `__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")`,
+        meta_data_subject:
+          '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__',
         meta_data_keywords: "OpenSCAD, 2D model",
         fill: "false",
         fill_color: "black",
@@ -122,8 +127,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         stroke_width: 0.35,
       },
       experimentalFeatures: {
-        import_function: true, // if enable import() reuturns the data
-        lazy_union: true, // useful if you want to export mutilple models in a 3mf file (and mutiple colors)
+        import_function: true, // if enable import() returns the data
+        lazy_union: true, // useful if you want to export multiple models in a 3mf file (and multiple colors)
         predictible_output: true,
         roof: true,
         textmetrics: true,

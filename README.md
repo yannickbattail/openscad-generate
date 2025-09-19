@@ -39,5 +39,6 @@ Install [openscad-nightly](https://openscad.org/downloads.html#snapshots-linux-d
 npm run build
 CLI_DIR=$(pwd)
 cd the openscad project
-${CLI_DIR}/generate.sh generate --outFormats png,webp,3mf --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 ./OPENSCAD_FILE.scad
+${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 ./OPENSCAD_FILE.scad
+${CLI_DIR}/generate.sh init --add-generate-script true ./testing.scad
 ```
