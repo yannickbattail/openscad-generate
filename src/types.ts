@@ -23,6 +23,8 @@ export interface GenerateOptions {
   parallelJobs: number;
   generateMosaic: boolean;
   mosaicOptions: MosaicOptions;
+  embedThumbnailIn3mf: boolean;
+  embedSourcesIn3mf: boolean;
   openScadOptions: IOpenScadOptions;
 }
 

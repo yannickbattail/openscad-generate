@@ -44,7 +44,7 @@ export class Enhance3mf {
     this.zip3mf.addFile(this.relsFileName, Buffer.from(xmlContent));
   }
 
-  public addModelFile(modelFile: string) {
+  public addSourceFile(modelFile: string) {
     this.addFile(modelFile);
   }
 

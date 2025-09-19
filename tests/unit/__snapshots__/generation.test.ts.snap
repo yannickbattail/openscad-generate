@@ -2,6 +2,8 @@
 
 exports[`generation > getOpenscadOptions 1`] = `
 {
+  "embedSourcesIn3mf": true,
+  "embedThumbnailIn3mf": true,
   "fileName": "",
   "generateMosaic": false,
   "mosaicOptions": {
@@ -26,8 +28,8 @@ exports[`generation > getOpenscadOptions 1`] = `
       "colorscheme": "Starnight",
       "csglimit": null,
       "imgsize": {
-        "height": 100,
-        "width": 100,
+        "height": 300,
+        "width": 300,
       },
       "preview": null,
       "projection": null,
@@ -52,7 +54,7 @@ exports[`generation > getOpenscadOptions 1`] = `
     },
     "hardwarnings": false,
     "imageOptions": {
-      "autocenter": false,
+      "autocenter": true,
       "camera": null,
       "colorscheme": "Starnight",
       "csglimit": null,
@@ -61,10 +63,10 @@ exports[`generation > getOpenscadOptions 1`] = `
         "width": 1024,
       },
       "preview": null,
-      "projection": null,
+      "projection": "p",
       "render": null,
       "view": null,
-      "viewall": false,
+      "viewall": true,
     },
     "openScadExecutable": "openscad",
     "option3mf": {
@@ -74,9 +76,9 @@ exports[`generation > getOpenscadOptions 1`] = `
       "decimal_precision": "6",
       "material_type": "color",
       "meta_data_copyright": "me 2025",
-      "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")",
+      "meta_data_description": "__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__",
       "meta_data_designer": "me",
-      "meta_data_license_terms": "CC BY https://creativecommons.org/licenses/by/4.0/",
+      "meta_data_license_terms": "CC BY https://creativecommons.org/licenses/by/4.0/ GPL https://www.gnu.org/licenses/gpl-3.0.html",
       "meta_data_rating": "",
       "meta_data_title": "__BASE_FILE_NAME__ - __PARAMETER_SET__",
       "unit": "millimeter",
@@ -88,7 +90,7 @@ exports[`generation > getOpenscadOptions 1`] = `
       "grid_size": 10,
       "meta_data_author": "me",
       "meta_data_keywords": "OpenSCAD, 2D model",
-      "meta_data_subject": "__BASE_FILE_NAME__ - __PARAMETER_SET__ (made with OpenSCAD from "file __FILE_NAME__")",
+      "meta_data_subject": "__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__",
       "meta_data_title": "__BASE_FILE_NAME__ - __PARAMETER_SET__",
       "orientation": "portrait",
       "paper_size": "a4",

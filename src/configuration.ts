@@ -10,6 +10,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
     onlyParameterSet: "",
     parallelJobs: 1,
     outputDir: "./gen",
+    embedThumbnailIn3mf: true,
+    embedSourcesIn3mf: true,
     outFormats: [
       Export2dFormat.png,
       //    ExportAllFormat.gif,

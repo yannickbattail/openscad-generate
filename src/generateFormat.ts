@@ -104,6 +104,22 @@ async function genModel(
   return openScadOutputWithSummary;
 }
 
+function enhance3mf(options: GenerateOptions, summary: OpenScadOutputWithSummary, parameterFileSet: ParameterFileSet) {
+  if (options.embedSourcesIn3mf || options.embedThumbnailIn3mf) {
+    const enhance = new Enhance3mf(summary.file);
+    if (options.embedThumbnailIn3mf) {
+      enhance.addThumbnail();
+      console.log(chalk.green(`ℹ️ Added thumbnail to ${parameterFileSet.parameterName}`));
+    }
+    if (options.embedSourcesIn3mf) {
+      enhance.addSourceFile(summary.modelFile);
+      enhance.addParameterSet(parameterFileSet);
+      console.log(chalk.green(`ℹ️ Added sources to ${parameterFileSet.parameterName}`));
+    }
+    enhance.save();
+  }
+}
+
 async function gen3mf(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
@@ -115,11 +131,7 @@ async function gen3mf(
   opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, newOptions, parameterFileSet);
   opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, newOptions, parameterFileSet);
   const summary = await genModel(openscad, parameterFileSet, format, newOptions);
-  const enhance = new Enhance3mf(summary.file);
-  enhance.addThumbnail();
-  enhance.addModelFile(summary.modelFile);
-  enhance.addParameterSet(parameterFileSet);
-  enhance.save();
+  enhance3mf(options, summary, parameterFileSet);
   return summary;
 }
 

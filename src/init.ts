@@ -92,6 +92,8 @@ module ball(size) {
 
   const config = `
 outputDir: ./gen
+embedThumbnailIn3mf: true
+embedSourcesIn3mf: true
 outFormats:
   ### image
   - png
