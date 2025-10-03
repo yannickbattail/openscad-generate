@@ -23,6 +23,8 @@ export interface GenerateOptions {
   parallelJobs: number;
   generateMosaic: boolean;
   mosaicOptions: MosaicOptions;
+  generateSlideShow: "webp" | "gif" | null;
+  slideShowInterval: number;
   embedThumbnailIn3mf: boolean;
   embedSourcesIn3mf: boolean;
   openScadOptions: IOpenScadOptions;
