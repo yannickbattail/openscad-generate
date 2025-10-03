@@ -40,6 +40,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         height: 2,
       },
     },
+    generateSlideShow: "webp",
+    slideShowInterval: 1000,
     openScadOptions: {
       backend: "Manifold", // or "CGAL"
       check_parameter_ranges: false,

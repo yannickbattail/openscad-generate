@@ -6,6 +6,7 @@ exports[`generation > getOpenscadOptions 1`] = `
   "embedThumbnailIn3mf": true,
   "fileName": "",
   "generateMosaic": false,
+  "generateSlideShow": "webp",
   "mosaicOptions": {
     "geometry": {
       "border": 2,
@@ -120,5 +121,6 @@ exports[`generation > getOpenscadOptions 1`] = `
   ],
   "outputDir": "./gen",
   "parallelJobs": 1,
+  "slideShowInterval": 1000,
 }
 `;

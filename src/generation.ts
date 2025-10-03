@@ -8,6 +8,7 @@ import { GenerateOptions } from "./types.js";
 import { OpenScad, OpenScadOutputWithSummary, ParameterSet } from "openscad-cli-wrapper";
 import { genParamSetInFormat } from "./generateFormat.js";
 import { GenerateMosaic } from "./util/MosaicGeneration.js";
+import { GenerateSlideShow } from "./util/SlideShowGeneration.js";
 
 export async function generate(genOptions: GenerateOptions) {
   const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
@@ -47,6 +48,14 @@ export async function generate(genOptions: GenerateOptions) {
       const pngFiles = getPngResult(result.filter((r) => r.status === "fulfilled").map((r) => r.value));
       if (pngFiles) {
         await GenerateMosaic(pngFiles, genOptions, executor);
+      } else {
+        console.error("⚠️ No PNG files for generating mosaic. (you need to generate PNG images)");
+      }
+    }
+    if (genOptions.generateSlideShow) {
+      const pngFiles = getPngResult(result.filter((r) => r.status === "fulfilled").map((r) => r.value));
+      if (pngFiles) {
+        await GenerateSlideShow(pngFiles, genOptions, executor);
       } else {
         console.error("⚠️ No PNG files for generating mosaic. (you need to generate PNG images)");
       }

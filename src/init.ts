@@ -134,6 +134,10 @@ mosaicOptions:
     width: 2
     ### number of lines
     height: 2
+### generate a slide show in webp or git (or null to not generate a slide show)
+generateSlideShow: webp
+### delay in milliseconds between frames
+slideShowInterval: 1000
 openScadOptions:
   ### executable location
   openScadExecutable: openscad-nightly # or "openscad"
