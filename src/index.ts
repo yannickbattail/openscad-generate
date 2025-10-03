@@ -10,7 +10,7 @@ import { init } from "./init.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.3.1");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.3.2");
 
 program
   .command("generate")
@@ -77,7 +77,7 @@ program
   )
   .option(
     "-g, --add-generate-script <add-generate-script>",
-    `force overwrite existing files. If true, it will overwrite existing files. (use the Force Luke!)`,
+    `add generation script generate_<baseFileName>.sh and a .gitignore file.`,
     false,
   )
   .action((openscadFile, options) => init(openscadFile, active(options.force), active(options.addGenerateScript)));

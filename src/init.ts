@@ -5,8 +5,8 @@ import chalk from "chalk";
 export function init(openscadFile: string, force: boolean, addGenerateScript) {
   const filePath = path.parse(openscadFile);
   const filesContent = getFilesContent(filePath.name);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.scad`, filesContent.openscad, force);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.json`, filesContent.preset, force);
+  writeFile(`${filePath.dir || "."}/${filePath.name}.scad`, filesContent.openscad, false);
+  writeFile(`${filePath.dir || "."}/${filePath.name}.json`, filesContent.preset, false);
   writeFile(`${filePath.dir || "."}/${filePath.name}.yaml`, filesContent.config, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
   if (addGenerateScript) {
