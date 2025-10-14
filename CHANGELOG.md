@@ -2,6 +2,10 @@
 
 ## [1.3.3] - 2025-10-14
 
+### Fixed
+
+- add quotes to openscad parameters to prevent bug with values containing spaces
+
 ### Changed
 
 - create a changelog and update readme
@@ -18,4 +22,5 @@
 
 ### Added
 
-- generate a slide show of all presets in webp or gif. New options: `generateSlideShow: "webp" | "gif" | null;` and `slideShowInterval: number;`
+- generate a slide show of all presets in webp or gif. New options: `generateSlideShow: "webp" | "gif" | null;` and
+  `slideShowInterval: number;`
