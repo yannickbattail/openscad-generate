@@ -13,6 +13,7 @@ export async function GenerateMosaic(files: string[], genOptions: GenerateOption
       `➡️ Generating mosaic ${genOptions.mosaicOptions.tiles?.width}x${genOptions.mosaicOptions.tiles?.height} for files: ${files}`,
     ),
   );
-  await executor(`montage ${debug} -geometry "${geometry}" -tile "${tiles}" "${files.join('" "')}" "${mosaicFile}"`);
+  const escapedFiles = files.map((img) => `'${img}'`).join(" ");
+  await executor(`montage ${debug} -geometry '${geometry}' -tile '${tiles}' ${escapedFiles} '${mosaicFile}'`);
   console.log(chalk.green(`✅ Success generating mosaic`));
 }
