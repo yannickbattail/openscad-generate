@@ -25,10 +25,10 @@ async function GenerateWebpSlideShow(
   executor: Executor,
 ): Promise<string> {
   const debugCmd = genOptions.openScadOptions.debug ? "-v" : "";
-  const escapedImages = images.map((img) => `"${img}"`).join(" ") + " ";
+  const escapedImages = images.map((img) => `'${img}'`).join(" ");
   const slideShowFile = `${genOptions.outputDir}/slideShow_${path.parse(genOptions.fileName).name}.webp`;
   return await executor(
-    `img2webp ${debugCmd} -o "${slideShowFile}" -d "${genOptions.slideShowInterval}" ${escapedImages}`,
+    `img2webp ${debugCmd} -o '${slideShowFile}' -d '${genOptions.slideShowInterval}' ${escapedImages}`,
   );
 }
 
@@ -38,9 +38,9 @@ async function GenerateGifSlideShow(
   executor: Executor,
 ): Promise<string> {
   const debugCmd = genOptions.openScadOptions.debug ? "-verbose" : "";
-  const escapedImages = images.map((img) => `"${img}"`).join(" ") + " ";
+  const escapedImages = images.map((img) => `'${img}'`).join(" ");
   const slideShowFile = `${genOptions.outputDir}/slideShow_${path.parse(genOptions.fileName).name}.gif`;
   return await executor(
-    `convert ${debugCmd} -delay "${genOptions.slideShowInterval * 10}" -loop 0 ${escapedImages} "${slideShowFile}"`,
+    `convert ${debugCmd} -delay '${genOptions.slideShowInterval * 10}' -loop 0 ${escapedImages} '${slideShowFile}'`,
   );
 }

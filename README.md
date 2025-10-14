@@ -4,8 +4,7 @@ nodejs script to generate 3D models and images from OpenSCAD files.
 
 It generates for all the presets:
 
-- png image
-- webp (or gif) animation
+- png image and webp (or gif) animation
 - 3mf 3D model
 - add thumbnail to the 3mf model and source code
 - mosaic of all the presets
@@ -65,6 +64,6 @@ Install [openscad-nightly](https://openscad.org/downloads.html#snapshots-linux-d
 npm run build
 CLI_DIR=$(pwd)
 cd the openscad project
-${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 ./OPENSCAD_FILE.scad
+${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 OPENSCAD_FILE.scad
 ${CLI_DIR}/generate.sh init --add-generate-script true ./testing.scad
 ```

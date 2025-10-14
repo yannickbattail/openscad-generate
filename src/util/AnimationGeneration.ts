@@ -8,11 +8,14 @@ export async function GenerateWebpAnimation(
 ): Promise<OpenScadOutputWithSummary> {
   const animImagesPattern = output.file;
   output.file = animImagesPattern.replace("_animImg*.png", ".webp");
+  const escapedAnimImagesPattern = animImagesPattern.replaceAll(" ", "\\ ");
   const debugCmd = debug ? "-v" : "";
-  output.output += await executor(`img2webp ${debugCmd} -o "${output.file}" -d "${animDelay}" ${animImagesPattern}`);
+  output.output += await executor(
+    `img2webp ${debugCmd} -o '${output.file}' -d '${animDelay}' ${escapedAnimImagesPattern}`,
+  );
   if (!debug) {
     try {
-      output.output += await executor(`rm ${animImagesPattern}`);
+      output.output += await executor(`rm ${escapedAnimImagesPattern}`);
     } catch (error) {
       console.log(`Error cleaning anim images (${animImagesPattern})`, error);
     }
@@ -28,13 +31,14 @@ export async function GenerateGifAnimation(
 ): Promise<OpenScadOutputWithSummary> {
   const animImagesPattern = output.file;
   output.file = animImagesPattern.replace("_animImg*.png", ".gif");
+  const escapedAnimImagesPattern = animImagesPattern.replaceAll(" ", "\\ ");
   const debugCmd = debug ? "-verbose" : "";
   output.output += await executor(
-    `convert ${debugCmd} -delay "${animDelay * 10}" -loop 0 ${animImagesPattern} "${output.file}"`,
+    `convert ${debugCmd} -delay '${animDelay * 10}' -loop 0 ${escapedAnimImagesPattern} '${output.file}'`,
   );
   if (!debug) {
     try {
-      output.output += await executor(`rm ${animImagesPattern}`);
+      output.output += await executor(`rm ${escapedAnimImagesPattern}`);
     } catch (error) {
       console.log(`Error cleaning anim images (${animImagesPattern})`, error);
     }
