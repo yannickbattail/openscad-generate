@@ -7,6 +7,8 @@ import { generate } from "./generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
 import { init } from "./init.js";
+import { Export3dFormat } from "openscad-cli-wrapper";
+import { convert } from "./conversion.js";
 
 const program = new Commander.Command();
 
@@ -64,6 +66,51 @@ program
     if (options.debugMode) genOption.openScadOptions.debug = active(options.debugMode);
     if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
     return generate(genOption);
+  });
+
+program
+  .command("convert")
+  .description("convert from a format to another")
+  .argument("<inputFile>", "input file")
+  .option(
+    "-f, --outFormats <outFormats>",
+    `list of outFormats (separated by coma) to refresh : (${Object.values(Export3dFormat).join(",")}). If not provided, all will be refreshed.`,
+    "",
+  )
+  .option(
+    "-o, --outputDir <outputDir>",
+    `Output directory where the generated files will be stored. If not provided, it will be "./gen".`,
+    "",
+  )
+  .option(
+    "-c, --configFile <configFile>",
+    "Path to a config file with the parameters to use. If not provided, it will use the default parameters.",
+    "",
+  )
+  .option(
+    "-j, --parallelJobs <parallelJobs>",
+    `continue on error (default: false). If true, it will continue to run even if a command (openscad, webp, imagemagic) fails.`,
+    "1",
+  )
+  .option(
+    "-D, --debugMode <debugMode>",
+    `run in debug mode (default: false). If true, the command  and its output will be logged.`,
+    false,
+  )
+  .action(async (inputFile, outputFile, options) => {
+    let genOption: GenerateOptions = getDefaultOpenscadOptions();
+    if (options.configFile) {
+      const configFromFile = await loadConfig(options.configFile);
+      genOption = mergeDeep(genOption, configFromFile) as GenerateOptions;
+      if (configFromFile.outFormats) genOption.outFormats = configFromFile.outFormats;
+    }
+    genOption.fileName = inputFile;
+    if (options.outFormats) genOption.outFormats = toExportAllFormat(options.outFormats);
+    if (options.outputDir) genOption.outputDir = options.outputDir;
+    if (options.parallelJobs) genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
+    if (options.debugMode) genOption.openScadOptions.debug = active(options.debugMode);
+    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
+    return convert(genOption);
   });
 
 program
