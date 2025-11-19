@@ -31,7 +31,7 @@ export async function genParamSetInFormat(
     } else if (format === GeneratedFormat.webp || format === GeneratedFormat.gif) {
       return genAnimation(openscad, parameterFileSet, format, options, executor);
     } else if (format === Export3dFormat["3mf"]) {
-      return gen3mf(openscad, parameterFileSet, format as Export3dFormat, options);
+      return gen3mf(openscad, parameterFileSet, format as Export3dFormat, options, false);
     } else if (Object.values(Export3dFormat).includes(format as Export3dFormat)) {
       return genModel(openscad, parameterFileSet, format as Export3dFormat, options);
     } else {
@@ -92,7 +92,7 @@ async function genAnimation(
   return outAnim;
 }
 
-async function genModel(
+export async function genModel(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
   format: Export3dFormat,
@@ -104,7 +104,11 @@ async function genModel(
   return openScadOutputWithSummary;
 }
 
-function enhance3mf(options: GenerateOptions, summary: OpenScadOutputWithSummary, parameterFileSet: ParameterFileSet) {
+export function enhance3mf(
+  options: GenerateOptions,
+  summary: OpenScadOutputWithSummary,
+  parameterFileSet: ParameterFileSet,
+) {
   if (options.embedSourcesIn3mf || options.embedThumbnailIn3mf) {
     const enhance = new Enhance3mf(summary.file);
     if (options.embedThumbnailIn3mf) {
@@ -120,17 +124,19 @@ function enhance3mf(options: GenerateOptions, summary: OpenScadOutputWithSummary
   }
 }
 
-async function gen3mf(
+export async function gen3mf(
   openscad: OpenScad,
   parameterFileSet: ParameterFileSet,
   format: Export3dFormat,
   options: GenerateOptions,
+  generateThumbnail: boolean,
 ): Promise<OpenScadOutputWithSummary> {
   const newOptions = deepClone(options);
   const opt3mf = newOptions.openScadOptions.option3mf;
   opt3mf.meta_data_title = replaceVars(opt3mf.meta_data_title, newOptions, parameterFileSet);
   opt3mf.meta_data_description = replaceVars(opt3mf.meta_data_description, newOptions, parameterFileSet);
   const summary = await genModel(openscad, parameterFileSet, format, newOptions);
+  if (generateThumbnail) await genImage(openscad, parameterFileSet, options);
   enhance3mf(options, summary, parameterFileSet);
   return summary;
 }
@@ -151,7 +157,7 @@ async function gen2D(
   return openScadOutputWithSummary;
 }
 
-function replaceVars(pattern: string, options: GenerateOptions, parameterFileSet: ParameterFileSet): string {
+export function replaceVars(pattern: string, options: GenerateOptions, parameterFileSet: ParameterFileSet): string {
   const vars: Record<string, string> = {
     FILE_NAME: path.parse(options.fileName).base,
     BASE_FILE_NAME: path.parse(options.fileName).name,
