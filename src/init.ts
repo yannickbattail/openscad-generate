@@ -251,6 +251,8 @@ openScadOptions:
     object_function: true
     ### enable roof()
     roof: true
+    ### enable vector-swizzle
+    vector_swizzle: true
     ### Enable the textmetrics() and fontmetrics() functions.
     textmetrics: true
 `;

@@ -137,6 +137,7 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         object_function: true,
         input_driver_dbus: false,
         vertex_object_renderers_indexing: false,
+        vector_swizzle: true,
         python_engine: false,
       },
     },
