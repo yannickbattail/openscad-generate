@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.5] - 2025-11-19
+
+### Added
+
+- handle new experimental features: vector-swizzle
+
 ## [1.3.4] - 2025-10-14
 
 ### Fixed
