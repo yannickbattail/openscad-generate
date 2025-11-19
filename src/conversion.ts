@@ -16,6 +16,7 @@ export async function convert(genOptions: GenerateOptions) {
   }
   const openscad = new OpenScad(genOptions.fileName, genOptions.outputDir, executor);
   try {
+    parameterFileSet;
     const tasks: Promise<OpenScadOutputWithSummary | null>[] = genOptions.outFormats
       .map((format) => limiter(async () => convertInFormat(format, openscad, parameterFileSet, genOptions)))
       .flat();
