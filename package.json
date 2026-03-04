@@ -1,7 +1,7 @@
 {
   "name": "openscad-generate",
   "description": "Generate 3D models, animations and images from OpenSCAD files",
-  "version": "1.3.4",
+  "version": "1.3.6",
   "author": "XcinnaY",
   "maintainer": "XcinnaY",
   "license": "LGPL-3.0-or-later",
@@ -17,41 +17,40 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "clean": "rm -Rf ./*.js ./*/*.js coverage dist || true",
+    "clean": "rm -Rf ./*.js ./*/*.js coverage dist tests/unit/run/out || true",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "test": "vitest run --coverage ./tests/",
     "lint": "eslint --fix src tests",
-    "format": "prettier --log-level error --write . --ignore-path ./.gitignore",
+    "format": "prettier --log-level error --write .",
     "depcheck": "depcheck --quiet --ignore-path=./.gitignore --ignores='@types/*,@vitest/coverage-v8'",
-    "check": "npm run depcheck && npm run build && npm run lint && npm run format && npm run test",
-    "check-amer": "grep amersports package-lock.json || (echo 'ERROR: amersports found in package-lock.json' && exit 1)",
-    "check-updates": "npm-check-updates -u && npm i && npm dedupe && npm run check",
+    "check": "npm run depcheck && npm run format && npm run lint && npm run build && npm run test",
+    "check-updates": "npm-check-updates -u && npm update --save && npm i && npm dedupe && npm run check",
     "publish-new-v": "npm version patch --no-git-tag-version && npm run check && npm publish"
   },
   "dependencies": {
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
     "chalk": "^5.6.2",
-    "commander": "^14.0.2",
-    "fast-xml-parser": "^5.3.2",
+    "commander": "^14.0.3",
+    "fast-xml-parser": "^5.4.2",
     "js-yaml": "^4.1.1",
-    "openscad-cli-wrapper": "^1.4.10",
-    "p-limit": "^7.2.0"
+    "openscad-cli-wrapper": "^1.4.11",
+    "p-limit": "^7.3.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@types/commander": "^2.12.5",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.10.1",
-    "@vitest/coverage-v8": "^4.0.10",
+    "@types/node": "^25.3.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "depcheck": "^1.4.7",
-    "eslint": "^9.39.1",
-    "globals": "^16.5.0",
-    "npm-check-updates": "^19.1.2",
-    "prettier": "^3.6.2",
+    "eslint": "^10.0.2",
+    "globals": "^17.4.0",
+    "npm-check-updates": "^19.6.3",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.47.0",
-    "vitest": "^4.0.10"
+    "typescript-eslint": "^8.56.1",
+    "vitest": "^4.0.18"
   }
 }
