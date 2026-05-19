@@ -43,6 +43,7 @@ exports[`generation > getOpenscadOptions 1`] = `
     "check_parameters": false,
     "debug": false,
     "experimentalFeatures": {
+      "discretization_by_error": false,
       "import_function": true,
       "input_driver_dbus": false,
       "lazy_union": true,

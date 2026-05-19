@@ -251,6 +251,8 @@ openScadOptions:
     object_function: true
     ### enable roof()
     roof: true
+    ### enable discretization-by-error
+    discretization_by_error: false
     ### enable vector-swizzle
     vector_swizzle: true
     ### Enable the textmetrics() and fontmetrics() functions.
