@@ -3,3 +3,4 @@ dist
 coverage
 openscad-generate-*.tgz
 .idea
+.junie
