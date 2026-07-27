@@ -1,4 +1,5 @@
 import { Export2dFormat, Export3dFormat, IOpenScadOptions } from "openscad-cli-wrapper";
+import { ThingData } from "./thingiverseDeploy/thingData.js";
 
 export enum GeneratedFormat {
   gif = "gif",
@@ -27,6 +28,7 @@ export interface GenerateOptions {
   slideShowInterval: number;
   embedThumbnailIn3mf: boolean;
   embedSourcesIn3mf: boolean;
+  thingiverse: ThingData;
   openScadOptions: IOpenScadOptions;
 }
 

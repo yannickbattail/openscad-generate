@@ -124,5 +124,20 @@ exports[`generation > getOpenscadOptions 1`] = `
   "outputDir": "./gen",
   "parallelJobs": 1,
   "slideShowInterval": 1000,
+  "thingiverse": {
+    "category": "3D Printing",
+    "creator": "me",
+    "instructions": "YourInstructionsHere",
+    "is_published": false,
+    "is_wip": true,
+    "license": "gpl",
+    "name": "thing Name",
+    "tags": [
+      "OpenSCAD",
+      "customizable",
+      "customizer",
+    ],
+    "thing_id": "",
+  },
 }
 `;

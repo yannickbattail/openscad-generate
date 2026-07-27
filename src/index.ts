@@ -7,6 +7,8 @@ import { generate } from "./generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
 import { init } from "./init.js";
+import { deployProject } from "./thingiverseDeploy/deploy.js";
+import { getThingiverseToken } from "./thingiverseDeploy/getThingiverseToken.js";
 
 const program = new Commander.Command();
 
@@ -67,6 +69,32 @@ program
   });
 
 program
+  .command("deploy-thingiverse")
+  .description("deploy project to thingiverse")
+  .argument("<openscadFile>", "OpenSCAD file")
+  .option(
+    "-c, --configFile <configFile>",
+    "Path to a config file with the parameters to use. If not provided, it will use the default parameters.",
+    "",
+  )
+  .action(async (openscadFile, options) => {
+    let genOption: GenerateOptions = getDefaultOpenscadOptions();
+    if (options.configFile) {
+      const configFromFile = await loadConfig(options.configFile);
+      genOption = mergeDeep(genOption, configFromFile) as GenerateOptions;
+      if (configFromFile.outFormats) genOption.outFormats = configFromFile.outFormats;
+    }
+    genOption.fileName = openscadFile;
+    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
+    await deployProject(openscadFile, genOption);
+  });
+
+program
+  .command("get-thingiverse-token")
+  .description("get an authentication token from thingiverse")
+  .action(() => getThingiverseToken());
+
+program
   .command("init")
   .description("init project with sample files")
   .argument("<openscadFile>", "OpenSCAD file")
@@ -77,7 +105,7 @@ program
   )
   .option(
     "-g, --add-generate-script <add-generate-script>",
-    `add generation script generate_<baseFileName>.sh and a .gitignore file.`,
+    `add a generation script generate_<baseFileName>.sh and a .gitignore file.`,
     false,
   )
   .action((openscadFile, options) => init(openscadFile, active(options.force), active(options.addGenerateScript)));

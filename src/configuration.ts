@@ -42,6 +42,18 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
     },
     generateSlideShow: "webp",
     slideShowInterval: 1000,
+
+    thingiverse: {
+      thing_id: "",
+      name: "thing Name",
+      creator: "me",
+      instructions: "YourInstructionsHere",
+      tags: ["OpenSCAD", "customizable", "customizer"],
+      category: "3D Printing",
+      license: "gpl",
+      is_wip: true,
+      is_published: false,
+    },
     openScadOptions: {
       backend: "Manifold", // or "CGAL"
       check_parameter_ranges: false,
