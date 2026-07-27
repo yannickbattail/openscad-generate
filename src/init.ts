@@ -11,6 +11,7 @@ export function init(openscadFile: string, force: boolean, addGenerateScript) {
   writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
   if (addGenerateScript) {
     writeFile(`${filePath.dir || "."}/generate_${filePath.name}.sh`, filesContent.generateScript, force);
+    writeFile(`${filePath.dir || "."}/deploy_${filePath.name}.sh`, filesContent.deployScript, force);
     writeFile(`${filePath.dir || "."}/.gitignore`, "gen\n", force);
   }
 }
@@ -374,6 +375,12 @@ fi
 exit $status
 
 `;
+  const deployScript = `#!/bin/bash
+
+export THINGIVERSE_TOKEN=$(npx openscad-generate@latest get-thingiverse-token)
+
+npx openscad-generate@latest deploy-thingiverse --configFile animal_d20.yaml animal_d20.scad
+`;
 
   return {
     openscad,
@@ -381,5 +388,6 @@ exit $status
     config,
     readme,
     generateScript,
+    deployScript,
   };
 }
