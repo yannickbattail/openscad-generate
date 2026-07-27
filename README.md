@@ -23,6 +23,7 @@ You can use the option `--parallelJobs 7` to generate in parallel. (optimal numb
 ## Usage
 
 ### Initialize a new project
+
 run the command `init` to generate a skeleton for your project.
 
 ```bash
@@ -44,15 +45,19 @@ now you can run the script to generate the 3D model, animations and images.
 ```bash
 ./generate_example.sh
 ```
+
 ### Deploy to Thingiverse
 
 run this command and follow the instruction to get a token from thingiverse.
+
 ```bash
 npx openscad-generate@latest get-thingiverse-token
 ```
+
 Keep the token for the next command.
 
 Set the section `thingiverse` in a your config file `OPENSCAD_FILE.yaml`
+
 ```bash
 THINGIVERSE_TOKEN=token_from_previous_command npx openscad-generate@latest deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
