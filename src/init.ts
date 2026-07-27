@@ -379,7 +379,7 @@ exit $status
 
 export THINGIVERSE_TOKEN=$(npx openscad-generate@latest get-thingiverse-token)
 
-npx openscad-generate@latest deploy-thingiverse --configFile animal_d20.yaml animal_d20.scad
+npx openscad-generate@latest deploy-thingiverse --configFile ${baseFile}.yaml ./${baseFile}.scad
 `;
 
   return {
