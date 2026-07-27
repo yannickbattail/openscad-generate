@@ -92,7 +92,8 @@ program
 program
   .command("get-thingiverse-token")
   .description("get an authentication token from thingiverse")
-  .action(() => getThingiverseToken());
+  .option("-i, --thingiverse-client-id <thingiverse-client-id>", `override thingiverse-client-id.`, "")
+  .action((options) => getThingiverseToken(options.thingiverseClientId));
 
 program
   .command("init")
