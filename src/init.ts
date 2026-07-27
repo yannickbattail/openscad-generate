@@ -94,6 +94,24 @@ module ball(size) {
 outputDir: ./gen
 embedThumbnailIn3mf: true
 embedSourcesIn3mf: true
+thingiverse:
+  thing_id: ''
+  ### thing Name
+  name: ''
+  ### you login name in thingiverse
+  creator: ''
+  instructions: 'YourInstructionsHere'
+  tags:
+  ### add your tags for the thing here
+  - OpenSCAD
+  - customizable
+  - customizer
+  ### Set the category of the thing. Uses full category name (eg. "3D Printer Parts")
+  category: '3D Printing'
+  ### one of: cc, cc-sa, cc-nd, cc-nc-sa, cc-nc-nd, pd0, gpl, lgpl, bsd
+  license: 'gpl'
+  is_wip: true
+  is_published: false
 outFormats:
   ### image
   - png

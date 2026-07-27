@@ -13,7 +13,7 @@ It generates for all the presets:
 More formats can be use: stl,asciistl,binstl,off,wrl,amf,3mf,pov,dxf,svg,pdf,png,gif,webp
 
 ```bash
-npx openscad-generate@latest generate --outFormats png,webp,3mf --configFile ${baseFile}.yaml ./${baseFile}.scad
+npx openscad-generate@latest generate --outFormats png,webp,3mf --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
 
 Add the option `--mosaicFormat 2,2` to generate a mosaic 2 rows, 2 lines.
@@ -22,6 +22,7 @@ You can use the option `--parallelJobs 7` to generate in parallel. (optimal numb
 
 ## Usage
 
+### Initialize a new project
 run the command `init` to generate a skeleton for your project.
 
 ```bash
@@ -42,6 +43,18 @@ now you can run the script to generate the 3D model, animations and images.
 
 ```bash
 ./generate_example.sh
+```
+### Deploy to Thingiverse
+
+run this command and follow the instruction to get a token from thingiverse.
+```bash
+npx openscad-generate@latest get-thingiverse-token
+```
+Keep the token for the next command.
+
+Set the section `thingiverse` in a your config file `OPENSCAD_FILE.yaml`
+```bash
+THINGIVERSE_TOKEN=token_from_previous_command npx openscad-generate@latest deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
 
 ## Required Software
@@ -66,4 +79,8 @@ CLI_DIR=$(pwd)
 cd the openscad project
 ${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 OPENSCAD_FILE.scad
 ${CLI_DIR}/generate.sh init --add-generate-script true ./testing.scad
+export THINGIVERSE_CLIENT_ID=82d74c00f1e3455805ae
+${CLI_DIR}/generate.sh get-thingiverse-token
+eport THINGIVERSE_TOKEN=XXXXXXXXXXXX
+${CLI_DIR}/generate.sh deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
