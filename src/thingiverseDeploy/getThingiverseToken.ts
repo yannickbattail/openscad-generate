@@ -5,7 +5,7 @@ import readline from "readline";
 const THINGIVERSE_CLIENT_ID = "82d74c00f1e3455805ae";
 
 export function getThingiverseToken(thingiverseClientId: string | undefined): void {
-  thingiverseClientId = thingiverseClientId ?? THINGIVERSE_CLIENT_ID;
+  thingiverseClientId = thingiverseClientId || THINGIVERSE_CLIENT_ID;
   const url =
     "https://www.thingiverse.com/login/oauth/authorize?client_id=" + thingiverseClientId + "&response_type=token";
 
