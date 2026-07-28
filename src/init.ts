@@ -111,8 +111,15 @@ thingiverse:
   category: '3D Printing'
   ### one of: cc, cc-sa, cc-nd, cc-nc-sa, cc-nc-nd, pd0, gpl, lgpl, bsd
   license: 'gpl'
+  ### Toggle whether this thing is a work in progress.
   is_wip: true
+  ### Toggle whether this thing is published.
   is_published: false
+  is_customizer: true
+  ### An array of thing ids that this thing is derived from.
+  ancestors: []
+  ### Toggle whether this thing is a remix of another thing.
+  is_remix: false
 outFormats:
   ### image
   - png

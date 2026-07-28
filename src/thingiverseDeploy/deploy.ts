@@ -228,7 +228,7 @@ function getImageFiles(projectPath: string) {
   return imgfiles;
 }
 
-function checkThingData(thingdata: ThingData & { description: string }) {
+function checkThingData(thingdata: ThingData) {
   const errors: string[] = [];
   if (!thingdata.name.trim()) {
     errors.push("Thing name is empty");
@@ -258,7 +258,7 @@ function getDescrption(readmeFile: string): string | undefined {
 }
 
 export async function deployProject(openscadFile: string, genOption: GenerateOptions): Promise<void> {
-  const thingData: ThingData & { description: string } = { ...genOption.thingiverse, description: "" };
+  const thingData: ThingData = genOption.thingiverse;
   console.log(`Deploying project: ${thingData.name}`);
   const filePath = path.parse(openscadFile);
   const projectDir = filePath.dir || ".";
@@ -279,7 +279,7 @@ export async function deployProject(openscadFile: string, genOption: GenerateOpt
 
 async function deployThingiverse(
   apiToken: string,
-  thingData: ThingData & { description: string },
+  thingData: ThingData,
   openscadFile: string,
   modelFiles: LocalFile[],
   imgFiles: LocalFile[],
@@ -325,12 +325,15 @@ async function deployThingiverse(
 
     const params = {
       name: thingData.name,
-      license: thingData.license,
-      category: thingData.category,
       description: thingData.description,
       instructions: thingData.instructions,
-      is_wip: thingData.is_wip,
       tags: thingData.tags,
+      category: thingData.category,
+      license: thingData.license,
+      is_customizer: thingData.is_customizer,
+      is_wip: thingData.is_wip,
+      ancestors: thingData.ancestors,
+      is_remix: thingData.is_remix,
     };
 
     const response = await httpPost("https://api.thingiverse.com/things/", {
@@ -357,12 +360,15 @@ async function deployThingiverse(
 
     const params = {
       name: thingData.name,
-      license: thingData.license,
-      category: thingData.category,
       description: thingData.description,
       instructions: thingData.instructions,
-      is_wip: thingData.is_wip,
       tags: thingData.tags,
+      category: thingData.category,
+      license: thingData.license,
+      is_customizer: thingData.is_customizer,
+      is_wip: thingData.is_wip,
+      ancestors: thingData.ancestors,
+      is_remix: thingData.is_remix,
     };
 
     await httpPatch(`https://api.thingiverse.com/things/${thingData.thing_id}/`, {
