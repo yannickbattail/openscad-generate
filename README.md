@@ -86,6 +86,6 @@ ${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.ya
 ${CLI_DIR}/generate.sh init --add-generate-script true ./testing.scad
 export THINGIVERSE_CLIENT_ID=82d74c00f1e3455805ae
 ${CLI_DIR}/generate.sh get-thingiverse-token
-eport THINGIVERSE_TOKEN=XXXXXXXXXXXX
+export THINGIVERSE_TOKEN=XXXXXXXXXXXX
 ${CLI_DIR}/generate.sh deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```

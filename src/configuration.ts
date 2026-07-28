@@ -47,12 +47,16 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
       thing_id: "",
       name: "thing Name",
       creator: "me",
+      description: "",
       instructions: "YourInstructionsHere",
       tags: ["OpenSCAD", "customizable", "customizer"],
       category: "3D Printing",
       license: "gpl",
       is_wip: true,
       is_published: false,
+      is_customizer: true,
+      ancestors: [],
+      is_remix: false,
     },
     openScadOptions: {
       backend: "Manifold", // or "CGAL"
