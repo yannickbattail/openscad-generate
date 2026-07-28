@@ -1,6 +1,6 @@
 import path from "node:path";
-import fs from "node:fs";
 import chalk from "chalk";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
 export function init(openscadFile: string, force: boolean, addGenerateScript) {
   const filePath = path.parse(openscadFile);
@@ -9,6 +9,8 @@ export function init(openscadFile: string, force: boolean, addGenerateScript) {
   writeFile(`${filePath.dir || "."}/${filePath.name}.json`, filesContent.preset, false);
   writeFile(`${filePath.dir || "."}/${filePath.name}.yaml`, filesContent.config, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
+  createDir(`${filePath.dir || "."}/photos`);
+  writeFile(`${filePath.dir || "."}//photos/.placeholder`, "", force);
   if (addGenerateScript) {
     writeFile(`${filePath.dir || "."}/generate_${filePath.name}.sh`, filesContent.generateScript, force);
     writeFile(`${filePath.dir || "."}/deploy_${filePath.name}.sh`, filesContent.deployScript, force);
@@ -17,12 +19,21 @@ export function init(openscadFile: string, force: boolean, addGenerateScript) {
 }
 
 function writeFile(filePath: string, content: string, force: boolean): void {
-  if (fs.existsSync(filePath) && !force) {
+  if (existsSync(filePath) && !force) {
     console.warn(chalk.yellow(`💥 File ${filePath} already exists, skipped! Use the --force option to overwrite.`));
     return;
   }
-  fs.writeFileSync(filePath, content);
+  writeFileSync(filePath, content);
   console.log(chalk.green(`✅ File written: ${filePath}`));
+}
+
+function createDir(filePath: string): void {
+  if (existsSync(filePath)) {
+    console.warn(chalk.yellow(`💥 Directory ${filePath} already exists, skipped!`));
+    return;
+  }
+  mkdirSync(filePath);
+  console.log(chalk.green(`✅ Directory created: ${filePath}`));
 }
 
 function getFilesContent(baseFile: string) {
@@ -101,12 +112,13 @@ thingiverse:
   name: ''
   ### you login name in thingiverse
   creator: ''
+  ### print and construction instructions
   instructions: 'YourInstructionsHere'
   tags:
   ### add your tags for the thing here
-  - OpenSCAD
-  - customizable
-  - customizer
+    - OpenSCAD
+    - customizable
+    - customizer
   ### Set the category of the thing. Uses full category name (eg. "3D Printer Parts")
   category: '3D Printing'
   ### one of: cc, cc-sa, cc-nd, cc-nc-sa, cc-nc-nd, pd0, gpl, lgpl, bsd
