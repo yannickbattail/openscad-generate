@@ -2,7 +2,7 @@ import path from "node:path";
 import chalk from "chalk";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-export function init(openscadFile: string, force: boolean, addGenerateScript) {
+export function init(openscadFile: string, force: boolean, addGenerateScript: boolean) {
   const filePath = path.parse(openscadFile);
   const filesContent = getFilesContent(filePath.name);
   writeFile(`${filePath.dir || "."}/${filePath.name}.scad`, filesContent.openscad, false);
@@ -10,7 +10,7 @@ export function init(openscadFile: string, force: boolean, addGenerateScript) {
   writeFile(`${filePath.dir || "."}/${filePath.name}.yaml`, filesContent.config, force);
   writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
   createDir(`${filePath.dir || "."}/photos`);
-  writeFile(`${filePath.dir || "."}//photos/.placeholder`, "", force);
+  writeFile(`${filePath.dir || "."}/photos/.placeholder`, "", force);
   if (addGenerateScript) {
     writeFile(`${filePath.dir || "."}/generate_${filePath.name}.sh`, filesContent.generateScript, force);
     writeFile(`${filePath.dir || "."}/deploy_${filePath.name}.sh`, filesContent.deployScript, force);
@@ -303,7 +303,7 @@ Description of ${baseFile} sample openscad model inspired from the openscad logo
 
 SEARCH FOR ??? AND COMPLETE THE DOC
 
-## UPDATE
+## Updates
 
 - v1: 1st design
 
@@ -352,16 +352,10 @@ Doc of [openscad-generate](https://github.com/yannickbattail/openscad-generate)
 [GPL](https://www.gnu.org/licenses/gpl-3.0.html)
 
 [CC BY](https://creativecommons.org/licenses/by/4.0/)
-
-## keywords
-
-openscad, customizable, customizer, ???
 `;
 
   const generateScript = `#!/bin/bash
 
-mosaicLines=2
-mosaicColumns=2
 parallelJobs=2
 if command -v nproc >/dev/null 2>&1; then # check if the command nproc exists
   parallelJobs=$(nproc --ignore=2)
@@ -372,7 +366,7 @@ fi
 
 echo "use \${parallelJobs} parallel jobs"
 
-npx openscad-generate@latest generate --mosaicFormat \${mosaicColumns},\${mosaicLines} --parallelJobs $parallelJobs --configFile ${baseFile}.yaml ./${baseFile}.scad
+npx openscad-generate@latest generate --parallelJobs $parallelJobs --configFile ${baseFile}.yaml ./${baseFile}.scad
 status=$?
 
 # Notify user about the result

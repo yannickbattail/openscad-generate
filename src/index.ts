@@ -3,7 +3,7 @@
 import * as Commander from "commander";
 import { unicorn } from "./util/unicorn.js";
 import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./types.js";
-import { generate } from "./generation.js";
+import { generate } from "./generation/generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
 import { init } from "./init.js";
