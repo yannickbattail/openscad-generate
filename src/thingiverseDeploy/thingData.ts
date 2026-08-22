@@ -51,4 +51,8 @@ export interface ThingData {
    * 	Toggle whether this thing is a remix of another thing.
    */
   is_remix: boolean;
+
+  images: string[];
+
+  files: string[];
 }

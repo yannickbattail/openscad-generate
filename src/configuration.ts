@@ -57,6 +57,8 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
       is_customizer: true,
       ancestors: [],
       is_remix: false,
+      images: [],
+      files: [],
     },
     openScadOptions: {
       backend: "Manifold", // or "CGAL"

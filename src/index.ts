@@ -86,7 +86,7 @@ program
     }
     genOption.fileName = openscadFile;
     if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
-    await deployProject(openscadFile, genOption);
+    await deployProject(openscadFile, genOption.thingiverse);
   });
 
 program

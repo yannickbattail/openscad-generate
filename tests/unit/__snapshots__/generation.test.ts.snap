@@ -129,6 +129,8 @@ exports[`generation > getOpenscadOptions 1`] = `
     "category": "3D Printing",
     "creator": "me",
     "description": "",
+    "files": [],
+    "images": [],
     "instructions": "YourInstructionsHere",
     "is_customizer": true,
     "is_published": false,
