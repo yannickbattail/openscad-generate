@@ -1,42 +1,177 @@
-import path from "node:path";
-import chalk from "chalk";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import fs from "node:fs";
+import * as yaml from "js-yaml";
+import { GeneratedFormat, GenerateOptions } from "../types.js";
+import { ColorScheme, Export2dFormat, Export3dFormat, precision, RecursivePartial, Unit } from "openscad-cli-wrapper";
 
-export function init(openscadFile: string, force: boolean, addGenerateScript) {
-  const filePath = path.parse(openscadFile);
-  const filesContent = getFilesContent(filePath.name);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.scad`, filesContent.openscad, false);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.json`, filesContent.preset, false);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.yaml`, filesContent.config, force);
-  writeFile(`${filePath.dir || "."}/${filePath.name}.md`, filesContent.readme, force);
-  createDir(`${filePath.dir || "."}/photos`);
-  writeFile(`${filePath.dir || "."}//photos/.placeholder`, "", force);
-  if (addGenerateScript) {
-    writeFile(`${filePath.dir || "."}/generate_${filePath.name}.sh`, filesContent.generateScript, force);
-    writeFile(`${filePath.dir || "."}/deploy_${filePath.name}.sh`, filesContent.deployScript, force);
-    writeFile(`${filePath.dir || "."}/.gitignore`, "gen\n", force);
-  }
+export function getDefaultOpenscadOptions(): GenerateOptions {
+  return {
+    fileName: "",
+    generateMosaic: false,
+    onlyParameterSet: "",
+    parallelJobs: 1,
+    outputDir: "./gen",
+    embedThumbnailIn3mf: true,
+    embedSourcesIn3mf: true,
+    outFormats: [
+      Export2dFormat.png,
+      //    ExportAllFormat.gif,
+      //    ExportAllFormat.pdf,
+      //    ExportAllFormat.svg,
+      //    ExportAllFormat.dxf,
+      GeneratedFormat.webp,
+      //GeneratedFormat.gif,
+      Export3dFormat["3mf"],
+      //    Export3dFormat.stl,
+      //    Export3dFormat.asciistl,
+      //    Export3dFormat.binstl,
+      //    Export3dFormat.off,
+      //    Export3dFormat.wrl,
+      //    Export3dFormat.amf,
+      //    Export3dFormat.pov,
+    ],
+    mosaicOptions: {
+      geometry: {
+        width: 256,
+        height: 256,
+        border: 2,
+      },
+      tiles: {
+        width: 2,
+        height: 2,
+      },
+    },
+    generateSlideShow: "webp",
+    slideShowInterval: 1000,
+
+    thingiverse: {
+      thing_id: "",
+      name: "thing Name",
+      creator: "me",
+      description: "",
+      instructions: "YourInstructionsHere",
+      tags: ["OpenSCAD", "customizable", "customizer"],
+      category: "3D Printing",
+      license: "gpl",
+      is_wip: true,
+      is_published: false,
+      is_customizer: true,
+      ancestors: [],
+      is_remix: false,
+      images: [],
+      files: [],
+    },
+    openScadOptions: {
+      backend: "Manifold", // or "CGAL"
+      check_parameter_ranges: false,
+      check_parameters: false,
+      debug: false,
+      openScadExecutable: "openscad", // or "openscad-nightly"
+      hardwarnings: false,
+      quiet: false,
+      trust_python: false,
+      python_module: null,
+      imageOptions: {
+        colorscheme: ColorScheme.Starnight, //Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
+        imgsize: {
+          height: 1024,
+          width: 1024,
+        },
+        autocenter: true, // adjust camera to look at object's center
+        camera: null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+        preview: null, // [=throwntogether] -for ThrownTogether preview png
+        projection: "p", // "o" for ortho or "p" for perspective when exporting png
+        render: null, // for full geometry evaluation when exporting png
+        view: null, // "axes" | "crosshairs" | "edges" | "scales";
+        viewall: true, // adjust camera to fit object
+        csglimit: null, // stop rendering at n CSG elements when exporting png
+      },
+      animOptions: {
+        animDelay: 50, // delay in milliseconds between frames
+        animate: 20, // number of frames
+        colorscheme: ColorScheme.Starnight, //Cornfield,Metallic,Sunset,Starnight,BeforeDawn,Nature,DaylightGem,NocturnalGem,DeepOcean,Solarized,Tomorrow,TomorrowNight,ClearSky,Monotone,
+        imgsize: {
+          height: 300,
+          width: 300,
+        },
+        autocenter: false, // adjust camera to look at object's center
+        camera: null, // camera parameters when exporting png: translate_x,y,z,rot_x,y,z,dist or eye_x,y,z,center_x,y,z
+        preview: null, // [=throwntogether] -for ThrownTogether preview png
+        projection: null, // "o" for ortho or "p" for perspective when exporting png
+        render: null, // for full geometry evaluation when exporting png
+        view: null, // "axes" | "crosshairs" | "edges" | "scales";
+        viewall: false, // adjust camera to fit object
+        csglimit: null,
+        animate_sharding: null,
+      },
+      option3mf: {
+        color_mode: "model", // "model" | "none" | "selected_only".  Set to "model" useful if you want to export mutilple colors in a 3mf file
+        color: "",
+        material_type: "color", // "color" | "basematerial". Set to "color" useful if you want to export mutilple colors in a 3mf file
+        unit: Unit.millimeter,
+        decimal_precision: precision.c6,
+        add_meta_data: "true",
+        meta_data_copyright: "me 2025",
+        meta_data_description:
+          '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__',
+        meta_data_designer: "me",
+        meta_data_license_terms:
+          "CC BY https://creativecommons.org/licenses/by/4.0/ GPL https://www.gnu.org/licenses/gpl-3.0.html",
+        meta_data_rating: "",
+        meta_data_title: "__BASE_FILE_NAME__ - __PARAMETER_SET__",
+      },
+      optionPdf: {
+        paper_size: "a4",
+        orientation: "portrait",
+        show_filename: "false",
+        show_scale: "true",
+        show_scale_message: "true",
+        show_grid: "false",
+        grid_size: 10.0,
+        add_meta_data: "true",
+        meta_data_title: "__BASE_FILE_NAME__ - __PARAMETER_SET__",
+        meta_data_author: "me",
+        meta_data_subject:
+          '__BASE_FILE_NAME__ - __PARAMETER_SET__ Made with OpenSCAD, generated at __GENERATION_DATE__ from "file __FILE_NAME__" with parameters: __PARAMETERS__',
+        meta_data_keywords: "OpenSCAD, 2D model",
+        fill: "false",
+        fill_color: "black",
+        stroke: "true",
+        stroke_color: "black",
+        stroke_width: 0.35,
+      },
+      optionSvg: {
+        fill: "false",
+        fill_color: "white",
+        stroke: "true",
+        stroke_color: "black",
+        stroke_width: 0.35,
+      },
+      experimentalFeatures: {
+        import_function: true, // if enable import() returns the data
+        lazy_union: true, // useful if you want to export multiple models in a 3mf file (and multiple colors)
+        predictible_output: true,
+        roof: true,
+        textmetrics: true,
+        object_function: true,
+        input_driver_dbus: false,
+        vertex_object_renderers_indexing: false,
+        discretization_by_error: false,
+        vector_swizzle: true,
+        python_engine: false,
+      },
+    },
+  };
 }
 
-function writeFile(filePath: string, content: string, force: boolean): void {
-  if (existsSync(filePath) && !force) {
-    console.warn(chalk.yellow(`💥 File ${filePath} already exists, skipped! Use the --force option to overwrite.`));
-    return;
+export async function loadConfig(configPath: string): Promise<RecursivePartial<GenerateOptions>> {
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`Config file not found: ${configPath}`);
   }
-  writeFileSync(filePath, content);
-  console.log(chalk.green(`✅ File written: ${filePath}`));
+  const configContent = fs.readFileSync(configPath, "utf-8");
+  return yaml.load(configContent) as RecursivePartial<GenerateOptions>;
 }
 
-function createDir(filePath: string): void {
-  if (existsSync(filePath)) {
-    console.warn(chalk.yellow(`💥 Directory ${filePath} already exists, skipped!`));
-    return;
-  }
-  mkdirSync(filePath);
-  console.log(chalk.green(`✅ Directory created: ${filePath}`));
-}
-
-function getFilesContent(baseFile: string) {
+export function getFilesContent(baseFile: string) {
   const openscad = `
 // part to generate
 part = "ball"; // [all, ball, stick]
@@ -132,6 +267,24 @@ thingiverse:
   ancestors: []
   ### Toggle whether this thing is a remix of another thing.
   is_remix: false
+  ### images to be uploaded to thingiverse (the first one will be the cover image)
+  images:
+  #- photos/${baseFile}_cover.jpg
+  - slideShow_${baseFile}.webp
+  - mosaic_${baseFile}.jpg
+
+  - ${baseFile}_all_20.webp
+  - ${baseFile}_all_20.png
+
+  - ${baseFile}_ball_50.webp
+  - ${baseFile}_ball_50.png
+
+  - ${baseFile}_stick_50.webp
+  - ${baseFile}_stick_50.png
+  ### files (models) to be uploaded to thingiverse (the first one will be the cover image)
+  files:
+  - ${baseFile}.scad
+  - ${baseFile}.json
 outFormats:
   ### image
   - png
@@ -303,7 +456,7 @@ Description of ${baseFile} sample openscad model inspired from the openscad logo
 
 SEARCH FOR ??? AND COMPLETE THE DOC
 
-## UPDATE
+## Updates
 
 - v1: 1st design
 
@@ -352,16 +505,10 @@ Doc of [openscad-generate](https://github.com/yannickbattail/openscad-generate)
 [GPL](https://www.gnu.org/licenses/gpl-3.0.html)
 
 [CC BY](https://creativecommons.org/licenses/by/4.0/)
-
-## keywords
-
-openscad, customizable, customizer, ???
 `;
 
   const generateScript = `#!/bin/bash
 
-mosaicLines=2
-mosaicColumns=2
 parallelJobs=2
 if command -v nproc >/dev/null 2>&1; then # check if the command nproc exists
   parallelJobs=$(nproc --ignore=2)
@@ -372,7 +519,7 @@ fi
 
 echo "use \${parallelJobs} parallel jobs"
 
-npx openscad-generate@latest generate --mosaicFormat \${mosaicColumns},\${mosaicLines} --parallelJobs $parallelJobs --configFile ${baseFile}.yaml ./${baseFile}.scad
+npx openscad-generate@latest generate --parallelJobs $parallelJobs --configFile ${baseFile}.yaml ./${baseFile}.scad
 status=$?
 
 # Notify user about the result

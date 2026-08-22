@@ -11,10 +11,10 @@ import {
   ParameterSet,
   ParameterSetName,
 } from "openscad-cli-wrapper";
-import { ExportAllFormat, GeneratedFormat, GenerateOptions } from "./types.js";
-import { GenerateGifAnimation, GenerateWebpAnimation } from "./util/AnimationGeneration.js";
-import { deepClone } from "./util/deepClone.js";
-import { Enhance3mf } from "./util/Enhance3mf.js";
+import { ExportAllFormat, GeneratedFormat, GenerateOptions } from "../types.js";
+import { GenerateGifAnimation, GenerateWebpAnimation } from "../util/AnimationGeneration.js";
+import { deepClone } from "../util/deepClone.js";
+import { Enhance3mf } from "../util/Enhance3mf.js";
 
 export async function genParamSetInFormat(
   format: ExportAllFormat,

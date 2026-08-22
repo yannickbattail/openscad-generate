@@ -3,12 +3,12 @@ import * as fs from "node:fs";
 import chalk from "chalk";
 import pLimit, { LimitFunction } from "p-limit";
 
-import { createFctExecCommand } from "./util/execBash.js";
-import { GenerateOptions } from "./types.js";
+import { createFctExecCommand } from "../util/execBash.js";
+import { GenerateOptions } from "../types.js";
 import { OpenScad, OpenScadOutputWithSummary, ParameterSet } from "openscad-cli-wrapper";
 import { genParamSetInFormat } from "./generateFormat.js";
-import { GenerateMosaic } from "./util/MosaicGeneration.js";
-import { GenerateSlideShow } from "./util/SlideShowGeneration.js";
+import { GenerateMosaic } from "../util/MosaicGeneration.js";
+import { GenerateSlideShow } from "../util/SlideShowGeneration.js";
 
 export async function generate(genOptions: GenerateOptions) {
   const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
