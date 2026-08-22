@@ -4,11 +4,12 @@ import * as Commander from "commander";
 import { unicorn } from "./util/unicorn.js";
 import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./types.js";
 import { generate } from "./generation/generation.js";
-import { getDefaultOpenscadOptions, loadConfig } from "./configuration.js";
+import { getDefaultOpenscadOptions, loadConfig } from "./configuration/configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
-import { init } from "./init.js";
+import { init } from "./configuration/init.js";
 import { deployProject } from "./thingiverseDeploy/deploy.js";
 import { getThingiverseToken } from "./thingiverseDeploy/getThingiverseToken.js";
+import { update } from "./configuration/update.js";
 
 const program = new Commander.Command();
 
@@ -110,6 +111,22 @@ program
     false,
   )
   .action((openscadFile, options) => init(openscadFile, active(options.force), active(options.addGenerateScript)));
+
+program
+  .command("update")
+  .description("update configuration files")
+  .argument("<openscadFile>", "OpenSCAD file")
+  .option(
+    "-f, --force <force>",
+    `force overwrite existing files. If true, it will overwrite existing files. (use the Force Luke!)`,
+    false,
+  )
+  .option(
+    "-g, --add-generate-script <add-generate-script>",
+    `add a generation script generate_<baseFileName>.sh and a .gitignore file.`,
+    false,
+  )
+  .action((openscadFile, options) => update(openscadFile, active(options.force), active(options.addGenerateScript)));
 
 program
   .command("unicorn")

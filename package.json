@@ -36,7 +36,8 @@
     "fast-xml-parser": "^5.10.1",
     "js-yaml": "^5.2.2",
     "openscad-cli-wrapper": "^1.4.17",
-    "p-limit": "^7.3.1"
+    "p-limit": "^7.3.1",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

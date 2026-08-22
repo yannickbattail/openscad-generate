@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getDefaultOpenscadOptions } from "../../src/configuration.js";
+import { getDefaultOpenscadOptions } from "../../src/configuration/configuration.js";
 
 describe("generation", () => {
   it("getOpenscadOptions", () => {
