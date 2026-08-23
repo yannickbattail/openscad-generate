@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.6] - 2026-08-23
+
+### Added
+
+- save thingiverse ID in configuration file
+- update command scan for photos in folder photos
+
+## [1.4.5] - 2026-08-22
+
+### Added
+
+- add command : update configuration files
+- set deployment files and images in the configuration file
+- automatic get token from the browser
+
+### Fixed
+
+- init generate script and placeholder
+
 ## [1.3.6] - 2026-05-19
 
 ### Added
