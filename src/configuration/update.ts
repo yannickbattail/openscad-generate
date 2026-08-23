@@ -1,7 +1,7 @@
 import path from "node:path";
 import { isMap, parse, parseDocument, type YAMLMap } from "yaml";
 import { getFilesContent } from "./configuration.js";
-import { createDir, writeFile, readFile } from "./files.js";
+import { createDir, writeFile, readFile, readDir } from "./files.js";
 import { Export2dFormat, ParameterSet } from "openscad-cli-wrapper";
 import { ExportAllFormat, GeneratedFormat } from "../types.js";
 
@@ -26,13 +26,15 @@ function updateConfig(filePath: path.ParsedPath) {
   const configurationFilePath = `${filePath.dir || "."}/${filePath.name}.yaml`;
   const updatedContent = updateConfigFile(readFile(configurationFilePath), getFilesContent(filePath.name).config);
   const doc = parseDocument(updatedContent);
-  const genFiles = getGeneratedFiles(filePath, parse(updatedContent)["outFormats"] as ExportAllFormat[]);
-  genFiles.images.unshift(`${filePath.dir || "."}/gen/mosaic_${filePath.name}.jpg`);
-  genFiles.images.unshift(`${filePath.dir || "."}/gen/slideShow_${filePath.name}.webp`);
-  genFiles.files.unshift(`${filePath.dir || "."}/${filePath.name}.json`);
-  genFiles.files.unshift(`${filePath.dir || "."}/${filePath.name}.scad`);
-  doc.setIn(["thingiverse", "images"], genFiles.images);
-  doc.setIn(["thingiverse", "files"], genFiles.files);
+  const { images, files } = getGeneratedFiles(filePath, parse(updatedContent)["outFormats"] as ExportAllFormat[]);
+  const photos = getPhotos(filePath);
+  images.unshift(`${filePath.dir || "."}/gen/mosaic_${filePath.name}.jpg`);
+  images.unshift(`${filePath.dir || "."}/gen/slideShow_${filePath.name}.webp`);
+  images.unshift(...photos);
+  files.unshift(`${filePath.dir || "."}/${filePath.name}.json`);
+  files.unshift(`${filePath.dir || "."}/${filePath.name}.scad`);
+  doc.setIn(["thingiverse", "images"], images);
+  doc.setIn(["thingiverse", "files"], files);
   writeFile(configurationFilePath, String(doc), true);
 }
 
@@ -59,7 +61,29 @@ function mergeYamlMap(existingMap: YAMLMap, refMap: YAMLMap): void {
   }
 }
 
-function getGeneratedFiles(filePath: path.ParsedPath, formats: ExportAllFormat[]) {
+function getPhotos(filePath: path.ParsedPath): string[] {
+  const name = filePath.name;
+  const photosDir = `${filePath.dir || "."}/photos`;
+  const files = readDir(photosDir);
+  const photos = files.filter(
+    (file) =>
+      file.startsWith(name) &&
+      (file.endsWith(".jpg") ||
+        file.endsWith(".jpeg") ||
+        file.endsWith(".png") ||
+        file.endsWith(".gif") ||
+        file.endsWith(".webp")),
+  );
+  return photos.map((photo) => `${photosDir}/${photo}`);
+}
+
+function getGeneratedFiles(
+  filePath: path.ParsedPath,
+  formats: ExportAllFormat[],
+): {
+  images: string[];
+  files: string[];
+} {
   const presetFilePath = `${filePath.dir || "."}/${filePath.name}.json`;
   const parameterSets: ParameterSet = JSON.parse(readFile(presetFilePath)) satisfies ParameterSet;
   const images: string[] = [];

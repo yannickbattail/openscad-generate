@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 
 export function writeFile(filePath: string, content: string, force: boolean): void {
@@ -25,4 +25,12 @@ export function readFile(filePath: string): string {
     return "";
   }
   return readFileSync(filePath, "utf-8");
+}
+
+export function readDir(filePath: string): string[] {
+  if (!existsSync(filePath)) {
+    console.warn(chalk.yellow(`💥 File ${filePath} does mot exist.`));
+    return [];
+  }
+  return readdirSync(filePath);
 }

@@ -245,7 +245,7 @@ thingiverse:
   thing_id: ''
   ### thing Name
   name: ''
-  ### you login name in thingiverse
+  ### your login name in thingiverse
   creator: ''
   ### print and construction instructions
   instructions: 'YourInstructionsHere'
