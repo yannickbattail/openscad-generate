@@ -5,7 +5,7 @@ exports[`generation > getOpenscadOptions 1`] = `
   "embedSourcesIn3mf": true,
   "embedThumbnailIn3mf": true,
   "fileName": "",
-  "generateMosaic": false,
+  "generateMosaic": true,
   "generateSlideShow": "webp",
   "mosaicOptions": {
     "geometry": {
