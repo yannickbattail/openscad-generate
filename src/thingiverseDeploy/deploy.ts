@@ -1,7 +1,9 @@
 import * as path from "path";
-import { existsSync, readFileSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync, unlinkSync } from "node:fs";
 import { ThingData } from "./thingData.js";
 import { ThingiverseApi } from "./thingiverseApi.js";
+import { parseDocument } from "yaml";
+import { readFile, writeFile } from "../configuration/files.js";
 
 interface LocalFile {
   name: string;
@@ -32,7 +34,7 @@ async function thingiverseDeployFiles(
 
   for (const localfile of localFiles) {
     let uploadRequired = true;
-    for (const remotefile of existingFiles) {
+    for (const remotefile of existingFiles ?? []) {
       if (remotefile.name === localfile.name) {
         uploadRequired = false;
 
@@ -250,19 +252,12 @@ async function deployThingiverse(
 
     thing = await api.createThing(params);
 
-    writeFileSync(path.join(projectPath, "CreationResponse.json"), JSON.stringify(thing, null, 4), "utf-8");
-
-    const newThingId = thing.id;
-
-    if (newThingId !== "") {
-      console.log(`Thing creation successful, thing ID: ${newThingId}`);
+    if (thing.id !== "") {
+      console.log(`Thing creation successful, thing ID: ${thing.id}`);
+      saveNewThingId(thing.id, filePath);
     }
 
-    //thingdata.thing_id = newThingId as string | number;
-    //fs.writeFileSync(datapath, JSON.stringify(thingdata, null, 4), "utf-8");
-
     console.log("InitialCreation file generated");
-    writeFileSync(path.join(projectPath, "InitialCreation"), "Initial creation success", "utf-8");
   } else if (mode! === "patch") {
     console.log("Patching thing");
 
@@ -316,5 +311,11 @@ async function deployThingiverse(
 
   const thingUrl = `https://thingiverse.com/thing:${thingData.thing_id}`;
   console.info(`✅ Deploying thing ${thingUrl} done!`);
-  writeFileSync(path.join(projectPath, "thingId.txt"), String(thingData.thing_id), "utf-8");
+}
+function saveNewThingId(id: unknown, filePath: path.ParsedPath) {
+  const configurationFilePath = `${filePath.dir || "."}/${filePath.name}.yaml`;
+  const doc = parseDocument(readFile(configurationFilePath));
+  doc.setIn(["thingiverse", "thing_id"], id);
+  doc.setIn(["thingiverse", "is_published"], true);
+  writeFile(configurationFilePath, String(doc), true);
 }

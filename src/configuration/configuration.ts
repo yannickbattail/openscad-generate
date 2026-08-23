@@ -6,7 +6,6 @@ import { ColorScheme, Export2dFormat, Export3dFormat, precision, RecursivePartia
 export function getDefaultOpenscadOptions(): GenerateOptions {
   return {
     fileName: "",
-    generateMosaic: false,
     onlyParameterSet: "",
     parallelJobs: 1,
     outputDir: "./gen",
@@ -29,6 +28,7 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
       //    Export3dFormat.amf,
       //    Export3dFormat.pov,
     ],
+    generateMosaic: true,
     mosaicOptions: {
       geometry: {
         width: 256,
@@ -172,6 +172,7 @@ export async function loadConfig(configPath: string): Promise<RecursivePartial<G
 }
 
 export function getFilesContent(baseFile: string) {
+  const title = baseFile.replaceAll("_", " ").replaceAll("-", " ");
   const openscad = `
 // part to generate
 part = "ball"; // [all, ball, stick]
@@ -244,7 +245,7 @@ embedSourcesIn3mf: true
 thingiverse:
   thing_id: ''
   ### thing Name
-  name: ''
+  name: '${title}'
   ### your login name in thingiverse
   creator: ''
   ### print and construction instructions
@@ -314,6 +315,7 @@ outFormats:
   # - amf
   ### 3: POV-Ray Raytracing Format
   # - pov
+generateMosaic: true
 mosaicOptions:
   geometry:
     ### dimensions of a tile
@@ -450,9 +452,9 @@ openScadOptions:
     textmetrics: true
 `;
 
-  const readme = `# ${baseFile}
+  const readme = `# ${title}
 
-Description of ${baseFile} sample openscad model inspired from the openscad logo.
+Description of ${title} sample openscad model inspired from the openscad logo.
 
 SEARCH FOR ??? AND COMPLETE THE DOC
 
