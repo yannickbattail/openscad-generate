@@ -3,9 +3,10 @@ import { exec } from "child_process";
 import http from "node:http";
 import { AddressInfo } from "node:net";
 
-// The Thingiverse ID of this app for requesting an API key
 const THINGIVERSE_CLIENT_ID = "82d74c00f1e3455805ae";
-
+/*
+/!\ this file most not log to stdout (only the token). logging must be done to stderr.
+ */
 export function getThingiverseToken(thingiverseClientId: string | undefined): void {
   thingiverseClientId = thingiverseClientId || THINGIVERSE_CLIENT_ID;
 
@@ -14,7 +15,7 @@ export function getThingiverseToken(thingiverseClientId: string | undefined): vo
     res.writeHead(200, { "Content-Type": "text/html; charset=UTF-8" });
     res.end(getRedirectionPage());
     if (token) {
-      console.info(token);
+      console.log(token);
       server.close();
     }
   });

@@ -10,6 +10,7 @@ import { init } from "./configuration/init.js";
 import { deployProject } from "./thingiverseDeploy/deploy.js";
 import { getThingiverseToken } from "./thingiverseDeploy/getThingiverseToken.js";
 import { update } from "./configuration/update.js";
+import { CoolLog } from "./util/CoolLog.js";
 
 const program = new Commander.Command();
 
@@ -65,7 +66,7 @@ program
     if (options.parallelJobs) genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
     if (options.mosaicFormat) genOption.mosaicOptions.tiles = toMosaicFormat(options.mosaicFormat);
     if (options.debugMode) genOption.openScadOptions.debug = active(options.debugMode);
-    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
+    if (genOption.openScadOptions.debug) CoolLog.debug("Configuration", genOption);
     return generate(genOption);
   });
 
@@ -86,7 +87,7 @@ program
       if (configFromFile.outFormats) genOption.outFormats = configFromFile.outFormats;
     }
     genOption.fileName = openscadFile;
-    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
+    if (genOption.openScadOptions.debug) CoolLog.debug("Configuration", genOption);
     await deployProject(openscadFile, genOption.thingiverse);
   });
 
@@ -132,7 +133,7 @@ program
   .command("unicorn")
   .description("unicorn say")
   .argument("<sentence>", "what the unicorn have to say")
-  .action((str) => console.log(unicorn(str)));
+  .action((str) => CoolLog.log(unicorn(str)));
 
 program.parse();
 

@@ -5,9 +5,9 @@ import { ParameterFileSet } from "openscad-cli-wrapper";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
 export class Enhance3mf {
-  private zip3mf: AdmZip;
   readonly dirInZip = "/Metadata/";
   readonly relsFileName = "_rels/.rels";
+  private zip3mf: AdmZip;
 
   constructor(private pathTo3mfFile: string) {
     this.zip3mf = new AdmZip(this.pathTo3mfFile);
@@ -21,6 +21,14 @@ export class Enhance3mf {
     const pngFile = this.pathTo3mfFile.replace(".3mf", ".png");
     this.addFile(pngFile);
     this.updateRels(pngFile);
+  }
+
+  public addSourceFile(modelFile: string) {
+    this.addFile(modelFile);
+  }
+
+  public addParameterSet(parameterFileSet: ParameterFileSet) {
+    this.addFile(parameterFileSet.parameterFile);
   }
 
   private updateRels(pngFile: string) {
@@ -42,14 +50,6 @@ export class Enhance3mf {
     ];
     const xmlContent = new XMLBuilder(xmlOpts).build(relationshipObj);
     this.zip3mf.addFile(this.relsFileName, Buffer.from(xmlContent));
-  }
-
-  public addSourceFile(modelFile: string) {
-    this.addFile(modelFile);
-  }
-
-  public addParameterSet(parameterFileSet: ParameterFileSet) {
-    this.addFile(parameterFileSet.parameterFile);
   }
 
   private addFile(filePath: string) {

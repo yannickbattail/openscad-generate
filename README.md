@@ -81,11 +81,16 @@ Install [openscad-nightly](https://openscad.org/downloads.html#snapshots-linux-d
 ```bash
 npm run build
 CLI_DIR=$(pwd)
+
 cd the openscad project
-${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 OPENSCAD_FILE.scad
-${CLI_DIR}/generate.sh init --add-generate-script true ./testing.scad
+OPENSCAD_BASEFILE=testing
+
+${CLI_DIR}/generate.sh init --add-generate-script true --force true ./${OPENSCAD_BASEFILE}.scad
+${CLI_DIR}/generate.sh generate --configFile ${OPENSCAD_BASEFILE}.yaml -j 1 ${OPENSCAD_BASEFILE}.scad
+${CLI_DIR}/generate.sh update --add-generate-script true --force true ./${OPENSCAD_BASEFILE}.scad
+
 export THINGIVERSE_CLIENT_ID=82d74c00f1e3455805ae
 ${CLI_DIR}/generate.sh get-thingiverse-token
 export THINGIVERSE_TOKEN=XXXXXXXXXXXX
-${CLI_DIR}/generate.sh deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
+${CLI_DIR}/generate.sh deploy-thingiverse --configFile ${OPENSCAD_BASEFILE}.yaml ${OPENSCAD_BASEFILE}.scad
 ```
