@@ -62,6 +62,29 @@ Set the section `thingiverse` in a your config file `OPENSCAD_FILE.yaml`
 THINGIVERSE_TOKEN=token_from_previous_command npx openscad-generate@latest deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
 
+## Use in docker
+
+Build the image
+```bash
+docker build . -t openscad-generate
+```
+VERSION
+
+Build the image
+```bash
+docker run -d --name openscad-generate -p 42080:42080 -v ${PWD}:/home/ubuntu/project openscad-generate
+```
+
+- `-v ${PWD}:/home/ubuntu/project` mount the current directory to the working directory in the container
+- `-p  42080:42080` expose port 42080, only required for thwe command `get-thingiverse-token`
+
+```bash
+docker exec -it openscad-generate init --add-generate-script true example.scad
+docker exec -it openscad-generate generate --configFile example.yaml example.scad
+```
+
+
+
 ## Required Software
 
 You need to install nodejs, imagemagick, webp and of course openscad-nightly.
