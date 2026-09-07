@@ -1,6 +1,6 @@
 FROM ubuntu:26.04
 
-ARG VERSION=1.4.6
+ARG VERSION=1.4.7
 
 ENV DEBIAN_FRONTEND=noninteractive
 

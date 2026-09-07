@@ -65,12 +65,15 @@ THINGIVERSE_TOKEN=token_from_previous_command npx openscad-generate@latest deplo
 ## Use in docker
 
 Build the image
+
 ```bash
 docker build . -t openscad-generate
 ```
+
 VERSION
 
 Build the image
+
 ```bash
 docker run -d --name openscad-generate -p 42080:42080 -v ${PWD}:/home/ubuntu/project openscad-generate
 ```
@@ -82,8 +85,6 @@ docker run -d --name openscad-generate -p 42080:42080 -v ${PWD}:/home/ubuntu/pro
 docker exec -it openscad-generate init --add-generate-script true example.scad
 docker exec -it openscad-generate generate --configFile example.yaml example.scad
 ```
-
-
 
 ## Required Software
 

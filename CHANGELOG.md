@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.7] - 2026-09-08
+
+### Added
+
+- add cool (colored) logging
+- update command scan for photos in folder photos
+
 ## [1.4.6] - 2026-08-23
 
 ### Added
