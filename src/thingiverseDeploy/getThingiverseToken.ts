@@ -3,11 +3,14 @@ import { exec } from "child_process";
 import http from "node:http";
 import { AddressInfo } from "node:net";
 
-const THINGIVERSE_CLIENT_ID = "82d74c00f1e3455805ae";
 /*
 /!\ this file most not log to stdout (only the token). logging must be done to stderr.
  */
-export function getThingiverseToken(thingiverseClientId: string | undefined): void {
+
+const THINGIVERSE_CLIENT_ID = "82d74c00f1e3455805ae";
+export const RANDOM_PORT = 0;
+
+export function getThingiverseToken(thingiverseClientId: string | undefined, port: number = RANDOM_PORT): void {
   thingiverseClientId = thingiverseClientId || THINGIVERSE_CLIENT_ID;
 
   const server = http.createServer((req, res) => {
@@ -20,7 +23,7 @@ export function getThingiverseToken(thingiverseClientId: string | undefined): vo
     }
   });
 
-  server.listen(0, "127.0.0.1", () => {
+  server.listen(port, "127.0.0.1", () => {
     const address = server.address();
     if (!address) {
       throw new Error("Server address is null");
@@ -62,7 +65,13 @@ function buildUrl(port: number | null, thingiverseClientId: string | undefined) 
 
 function openBrowser(url: string) {
   const openCommand = process.platform === "darwin" ? "open" : process.platform === "win32" ? "start" : "xdg-open";
-  exec(`${openCommand} "${url}"`);
+  exec(`${openCommand} "${url}"`, (error) => {
+    if (error) {
+      console.error(`Fail to open browser: ${error}`);
+      console.error(`Goto URL: ${url}`);
+      return;
+    }
+  });
 }
 
 function parseToken(urlStr: string): string | null {

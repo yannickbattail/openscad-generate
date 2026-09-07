@@ -8,7 +8,7 @@ import { getDefaultOpenscadOptions, loadConfig } from "./configuration/configura
 import { mergeDeep } from "./util/mergeDeep.js";
 import { init } from "./configuration/init.js";
 import { deployProject } from "./thingiverseDeploy/deploy.js";
-import { getThingiverseToken } from "./thingiverseDeploy/getThingiverseToken.js";
+import { getThingiverseToken, RANDOM_PORT } from "./thingiverseDeploy/getThingiverseToken.js";
 import { update } from "./configuration/update.js";
 import { CoolLog } from "./util/CoolLog.js";
 
@@ -95,7 +95,12 @@ program
   .command("get-thingiverse-token")
   .description("get an authentication token from thingiverse")
   .option("-i, --thingiverse-client-id <thingiverse-client-id>", `override thingiverse-client-id.`, "")
-  .action((options) => getThingiverseToken(options.thingiverseClientId));
+  .action((options) =>
+    getThingiverseToken(
+      options.thingiverseClientId,
+      parseInt(process.env["AUTHENTICATION_PORT"] ?? "0") || RANDOM_PORT,
+    ),
+  );
 
 program
   .command("init")
