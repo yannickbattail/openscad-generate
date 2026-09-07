@@ -25,6 +25,13 @@ export function unicorn(text: string = "") {
   return `${chalk.magenta(unicorn)}\n${chalkRainbow(text)}`;
 }
 
+export async function unicornWait(sec: number) {
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  console.log(unicorn(`Waiting ... ${sec}s`));
+  await delay(sec * 1000);
+  console.log(unicorn("Bye bye!"));
+}
+
 function chalkRainbow(str: string) {
   const letters = str.split("");
   const colors: ("red" | "yellow" | "green" | "cyan" | "blue" | "magenta")[] = [

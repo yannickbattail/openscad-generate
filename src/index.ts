@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as Commander from "commander";
-import { unicorn } from "./util/unicorn.js";
+import { unicorn, unicornWait } from "./util/unicorn.js";
 import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./types.js";
 import { generate } from "./generation/generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration/configuration.js";
@@ -138,7 +138,13 @@ program
   .command("unicorn")
   .description("unicorn say")
   .argument("<sentence>", "what the unicorn have to say")
-  .action((str) => CoolLog.log(unicorn(str)));
+  .action((str) => console.log(unicorn(str)));
+
+program
+  .command("unicorn-wait")
+  .description("Wait for the unicorn")
+  .argument("<seconds>", "time in sec to wait")
+  .action((sec) => unicornWait(parseInt(sec)));
 
 program.parse();
 
