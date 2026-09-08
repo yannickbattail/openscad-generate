@@ -1,7 +1,5 @@
 FROM ubuntu:26.04
 
-ARG VERSION=1.4.7
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System dependencies
@@ -12,29 +10,23 @@ RUN apt-get update \
         nodejs \
         npm \
         imagemagick \
+        libfreetype6  \
+        fontconfig  \
+        fonts-dejavu \
+        fonts-liberation \
         webp \
-    \
-    # Add OpenSCAD nightly repository
-    && wget -qO /etc/apt/trusted.gpg.d/obs-openscad-nightly.asc \
-        https://files.openscad.org/OBS-Repository-Key.pub \
-    && echo "deb https://download.opensuse.org/repositories/home:/t-paul/xUbuntu_26.04/ ./" \
-        > /etc/apt/sources.list.d/openscad-nightly.list \
-    \
-    # Install OpenSCAD nightly
+    && fc-cache -f -v \
+    && wget -qO /etc/apt/trusted.gpg.d/obs-openscad-nightly.asc https://files.openscad.org/OBS-Repository-Key.pub \
+    && echo "deb https://download.opensuse.org/repositories/home:/t-paul/xUbuntu_26.04/ ./" > /etc/apt/sources.list.d/openscad-nightly.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        openscad-nightly \
-    \
-    # Cleanup
+    && apt-get install -y --no-install-recommends openscad-nightly \
     && apt-get purge -y --auto-remove wget \
     && apt-get clean \
-    && rm -rf \
-        /var/lib/apt/lists/* \
-        /tmp/* \
-        /var/tmp/*
+    && rm -rf  /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install openscad-generate separately so changing VERSION
 # does not invalidate the system dependency layer.
+ARG VERSION=1.4.7
 RUN npm install --global "openscad-generate@${VERSION}"
 ENV AUTHENTICATION_PORT=42080
 

@@ -70,9 +70,9 @@ Build the image
 docker build . -t openscad-generate
 ```
 
-VERSION
+add `--build-arg VERSION=1.4.7` to build for a specific version of openscad-generate
 
-Build the image
+Run the image
 
 ```bash
 docker run -d --name openscad-generate -p 42080:42080 -v ${PWD}:/home/ubuntu/project openscad-generate
@@ -82,13 +82,13 @@ docker run -d --name openscad-generate -p 42080:42080 -v ${PWD}:/home/ubuntu/pro
 - `-p  42080:42080` expose port 42080, only required for thwe command `get-thingiverse-token`
 
 ```bash
-docker exec -it openscad-generate init --add-generate-script true example.scad
-docker exec -it openscad-generate generate --configFile example.yaml example.scad
+docker exec -it openscad-generate npx openscad-generate init --add-generate-script true example.scad
+docker exec -it openscad-generate npx openscad-generate generate --configFile example.yaml example.scad
 ```
 
 ## Required Software
 
-You need to install nodejs, imagemagick, webp and of course openscad-nightly.
+You need to install nodejs, imagemagick, webp and, of course, openscad-nightly.
 
 On ubuntu
 
