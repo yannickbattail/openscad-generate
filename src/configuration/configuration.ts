@@ -157,6 +157,7 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         vertex_object_renderers_indexing: false,
         discretization_by_error: false,
         vector_swizzle: true,
+        ai_features: false,
         python_engine: false,
       },
     },

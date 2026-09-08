@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import chalk from "chalk";
 import {
   Executor,
   Export2dFormat,
@@ -12,9 +11,10 @@ import {
   ParameterSetName,
 } from "openscad-cli-wrapper";
 import { ExportAllFormat, GeneratedFormat, GenerateOptions } from "../types.js";
-import { GenerateGifAnimation, GenerateWebpAnimation } from "../util/AnimationGeneration.js";
+import { GenerateGifAnimation, GenerateWebpAnimation } from "./AnimationGeneration.js";
 import { deepClone } from "../util/deepClone.js";
-import { Enhance3mf } from "../util/Enhance3mf.js";
+import { Enhance3mf } from "./Enhance3mf.js";
+import { CoolLog } from "../util/CoolLog.js";
 
 export async function genParamSetInFormat(
   format: ExportAllFormat,
@@ -35,10 +35,10 @@ export async function genParamSetInFormat(
     } else if (Object.values(Export3dFormat).includes(format as Export3dFormat)) {
       return genModel(openscad, parameterFileSet, format as Export3dFormat, options);
     } else {
-      throw new Error(`💥 Error unknown format: ${format}`);
+      throw new Error(`Unknown format: ${format}`);
     }
   } catch (error) {
-    console.error(`💥 Error generating parameter set: ${parameterFileSet.parameterName} in format ${format}`, error);
+    CoolLog.oups(`Error generating parameter set: ${parameterFileSet.parameterName} in format ${format}`, error);
     return null;
   }
 }
@@ -48,9 +48,9 @@ async function genImage(
   parameterFileSet: ParameterFileSet,
   options: GenerateOptions,
 ): Promise<OpenScadOutputWithSummary> {
-  console.log(chalk.green(`➡️ Generating image for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.start(`Generating image for parameter set: ${parameterFileSet.parameterName}`);
   const openScadOutputWithSummary = await openscad.generateImage(parameterFileSet, options.openScadOptions);
-  console.log(chalk.green(`✅ Success generating image for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.success(`Success generating image for parameter set: ${parameterFileSet.parameterName}`);
   return openScadOutputWithSummary;
 }
 
@@ -61,7 +61,7 @@ async function genAnimation(
   options: GenerateOptions,
   executor: Executor,
 ): Promise<OpenScadOutputWithSummary> {
-  console.log(chalk.green(`➡️ Generating animation ${format} for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.start(`Generating animation ${format} for parameter set: ${parameterFileSet.parameterName}`);
   const fileContent = fs.readFileSync(parameterFileSet.parameterFile, "utf-8");
   const parameterSet = JSON.parse(fileContent) satisfies ParameterSet as ParameterSet;
   parameterSet.parameterSets[parameterFileSet.parameterName]["animation_rotation"] = "true";
@@ -86,9 +86,7 @@ async function genAnimation(
       executor,
     );
   }
-  console.log(
-    chalk.green(`✅ Success generating animation ${format} for parameter set: ${parameterFileSet.parameterName}`),
-  );
+  CoolLog.success(`Success generating animation ${format} for parameter set: ${parameterFileSet.parameterName}`);
   return outAnim;
 }
 
@@ -98,9 +96,9 @@ async function genModel(
   format: Export3dFormat,
   options: GenerateOptions,
 ): Promise<OpenScadOutputWithSummary> {
-  console.log(chalk.green(`➡️ Generating model for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.start(`Generating model for parameter set: ${parameterFileSet.parameterName}`);
   const openScadOutputWithSummary = await openscad.generateModel(parameterFileSet, format, options.openScadOptions);
-  console.log(chalk.green(`✅ Success generating model for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.success(`Success generating model for parameter set: ${parameterFileSet.parameterName}`);
   return openScadOutputWithSummary;
 }
 
@@ -109,12 +107,12 @@ function enhance3mf(options: GenerateOptions, summary: OpenScadOutputWithSummary
     const enhance = new Enhance3mf(summary.file);
     if (options.embedThumbnailIn3mf) {
       enhance.addThumbnail();
-      console.log(chalk.green(`ℹ️ Added thumbnail to ${parameterFileSet.parameterName}`));
+      CoolLog.info(`Added thumbnail to ${parameterFileSet.parameterName}`);
     }
     if (options.embedSourcesIn3mf) {
       enhance.addSourceFile(summary.modelFile);
       enhance.addParameterSet(parameterFileSet);
-      console.log(chalk.green(`ℹ️ Added sources to ${parameterFileSet.parameterName}`));
+      CoolLog.info(`Added sources to ${parameterFileSet.parameterName}`);
     }
     enhance.save();
   }
@@ -145,9 +143,9 @@ async function gen2D(
   const optPdf = newOptions.openScadOptions.optionPdf;
   optPdf.meta_data_title = replaceVars(optPdf.meta_data_title, newOptions, parameterFileSet);
   optPdf.meta_data_subject = replaceVars(optPdf.meta_data_subject, newOptions, parameterFileSet);
-  console.log(chalk.green(`➡️ Generating document for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.start(`Generating document for parameter set: ${parameterFileSet.parameterName}`);
   const openScadOutputWithSummary = await openscad.generate2d(parameterFileSet, format, options.openScadOptions);
-  console.log(chalk.green(`✅ Success generating document for parameter set: ${parameterFileSet.parameterName}`));
+  CoolLog.success(`Success generating document for parameter set: ${parameterFileSet.parameterName}`);
   return openScadOutputWithSummary;
 }
 

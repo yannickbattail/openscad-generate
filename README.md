@@ -62,9 +62,33 @@ Set the section `thingiverse` in a your config file `OPENSCAD_FILE.yaml`
 THINGIVERSE_TOKEN=token_from_previous_command npx openscad-generate@latest deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
 
+## Use in docker
+
+Build the image
+
+```bash
+docker build . -t openscad-generate
+```
+
+add `--build-arg VERSION=1.4.7` to build for a specific version of openscad-generate
+
+Run the image
+
+```bash
+docker run -d --name openscad-generate -p 42080:42080 -v ${PWD}:/home/ubuntu/project openscad-generate
+```
+
+- `-v ${PWD}:/home/ubuntu/project` mount the current directory to the working directory in the container
+- `-p  42080:42080` expose port 42080, only required for thwe command `get-thingiverse-token`
+
+```bash
+docker exec -it openscad-generate npx openscad-generate init --add-generate-script true example.scad
+docker exec -it openscad-generate npx openscad-generate generate --configFile example.yaml example.scad
+```
+
 ## Required Software
 
-You need to install nodejs, imagemagick, webp and of course openscad-nightly.
+You need to install nodejs, imagemagick, webp and, of course, openscad-nightly.
 
 On ubuntu
 
@@ -81,11 +105,16 @@ Install [openscad-nightly](https://openscad.org/downloads.html#snapshots-linux-d
 ```bash
 npm run build
 CLI_DIR=$(pwd)
+
 cd the openscad project
-${CLI_DIR}/generate.sh generate --mosaicFormat 4,4 --configFile OPENSCAD_FILE.yaml -j 1 OPENSCAD_FILE.scad
-${CLI_DIR}/generate.sh init --add-generate-script true ./testing.scad
+OPENSCAD_BASEFILE=testing
+
+${CLI_DIR}/generate.sh init --add-generate-script true --force true ./${OPENSCAD_BASEFILE}.scad
+${CLI_DIR}/generate.sh generate --configFile ${OPENSCAD_BASEFILE}.yaml -j 1 ${OPENSCAD_BASEFILE}.scad
+${CLI_DIR}/generate.sh update --add-generate-script true --force true ./${OPENSCAD_BASEFILE}.scad
+
 export THINGIVERSE_CLIENT_ID=82d74c00f1e3455805ae
 ${CLI_DIR}/generate.sh get-thingiverse-token
 export THINGIVERSE_TOKEN=XXXXXXXXXXXX
-${CLI_DIR}/generate.sh deploy-thingiverse --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
+${CLI_DIR}/generate.sh deploy-thingiverse --configFile ${OPENSCAD_BASEFILE}.yaml ${OPENSCAD_BASEFILE}.scad
 ```

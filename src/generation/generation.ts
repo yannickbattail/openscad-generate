@@ -1,19 +1,19 @@
 import * as path from "node:path";
 import * as fs from "node:fs";
-import chalk from "chalk";
 import pLimit, { LimitFunction } from "p-limit";
 
 import { createFctExecCommand } from "../util/execBash.js";
 import { GenerateOptions } from "../types.js";
 import { OpenScad, OpenScadOutputWithSummary, ParameterSet } from "openscad-cli-wrapper";
 import { genParamSetInFormat } from "./generateFormat.js";
-import { GenerateMosaic } from "../util/MosaicGeneration.js";
-import { GenerateSlideShow } from "../util/SlideShowGeneration.js";
+import { GenerateMosaic } from "./MosaicGeneration.js";
+import { GenerateSlideShow } from "./SlideShowGeneration.js";
+import { CoolLog } from "../util/CoolLog.js";
 
 export async function generate(genOptions: GenerateOptions) {
   const executor = createFctExecCommand(!genOptions.openScadOptions.debug, !!genOptions.openScadOptions.debug);
   const limiter: LimitFunction = pLimit(genOptions.parallelJobs);
-  console.log(chalk.green(`🚀 Generating model for file: ${genOptions.fileName} in formats: ${genOptions.outFormats}`));
+  CoolLog.start(`🚀 Generating model for file: ${genOptions.fileName} in formats: ${genOptions.outFormats}`);
 
   if (!fs.existsSync(genOptions.outputDir)) {
     fs.mkdirSync(genOptions.outputDir);
@@ -42,14 +42,14 @@ export async function generate(genOptions: GenerateOptions) {
       .flat();
     const result = await Promise.allSettled(tasks);
     for (const fail of result.filter((r) => r.status === "rejected").map((r) => r.reason)) {
-      console.error(chalk.red(`💥 Error generating parameter set`, fail));
+      CoolLog.oups(`Error generating parameter set`, fail);
     }
     if (genOptions.generateMosaic) {
       const pngFiles = getPngResult(result.filter((r) => r.status === "fulfilled").map((r) => r.value));
       if (pngFiles) {
         await GenerateMosaic(pngFiles, genOptions, executor);
       } else {
-        console.error("⚠️ No PNG files for generating mosaic. (you need to generate PNG images)");
+        CoolLog.warn("No PNG files for generating mosaic. (you need to generate PNG images)");
       }
     }
     if (genOptions.generateSlideShow) {
@@ -57,11 +57,11 @@ export async function generate(genOptions: GenerateOptions) {
       if (pngFiles) {
         await GenerateSlideShow(pngFiles, genOptions, executor);
       } else {
-        console.error("⚠️ No PNG files for generating mosaic. (you need to generate PNG images)");
+        CoolLog.warn("No PNG files for generating mosaic. (you need to generate PNG images)");
       }
     }
   } catch (error) {
-    console.error(`💥 Error generating parameter set`, error);
+    CoolLog.oups(`Error generating parameter set`, error);
   }
 }
 

@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 
 import * as Commander from "commander";
-import { unicorn } from "./util/unicorn.js";
+import { unicorn, unicornWait } from "./util/unicorn.js";
 import { allFormats, defaultFormats, ExportAllFormat, GenerateOptions } from "./types.js";
 import { generate } from "./generation/generation.js";
 import { getDefaultOpenscadOptions, loadConfig } from "./configuration/configuration.js";
 import { mergeDeep } from "./util/mergeDeep.js";
 import { init } from "./configuration/init.js";
 import { deployProject } from "./thingiverseDeploy/deploy.js";
-import { getThingiverseToken } from "./thingiverseDeploy/getThingiverseToken.js";
+import { getThingiverseToken, RANDOM_PORT } from "./thingiverseDeploy/getThingiverseToken.js";
 import { update } from "./configuration/update.js";
+import { CoolLog } from "./util/CoolLog.js";
 
 const program = new Commander.Command();
 
-program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.3.5");
+program.name("openscad-generate").description("CLI to some JavaScript string utilities").version("1.4.7");
 
 program
   .command("generate")
@@ -65,7 +66,7 @@ program
     if (options.parallelJobs) genOption.parallelJobs = CheckParseInt(options.parallelJobs) ?? 1;
     if (options.mosaicFormat) genOption.mosaicOptions.tiles = toMosaicFormat(options.mosaicFormat);
     if (options.debugMode) genOption.openScadOptions.debug = active(options.debugMode);
-    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
+    if (genOption.openScadOptions.debug) CoolLog.debug("Configuration", genOption);
     return generate(genOption);
   });
 
@@ -86,7 +87,7 @@ program
       if (configFromFile.outFormats) genOption.outFormats = configFromFile.outFormats;
     }
     genOption.fileName = openscadFile;
-    if (genOption.openScadOptions.debug) console.log("Configuration", genOption);
+    if (genOption.openScadOptions.debug) CoolLog.debug("Configuration", genOption);
     await deployProject(openscadFile, genOption.thingiverse);
   });
 
@@ -94,7 +95,12 @@ program
   .command("get-thingiverse-token")
   .description("get an authentication token from thingiverse")
   .option("-i, --thingiverse-client-id <thingiverse-client-id>", `override thingiverse-client-id.`, "")
-  .action((options) => getThingiverseToken(options.thingiverseClientId));
+  .action((options) =>
+    getThingiverseToken(
+      options.thingiverseClientId,
+      parseInt(process.env["AUTHENTICATION_PORT"] ?? "0") || RANDOM_PORT,
+    ),
+  );
 
 program
   .command("init")
@@ -133,6 +139,12 @@ program
   .description("unicorn say")
   .argument("<sentence>", "what the unicorn have to say")
   .action((str) => console.log(unicorn(str)));
+
+program
+  .command("unicorn-wait")
+  .description("Wait for the unicorn")
+  .argument("<seconds>", "time in sec to wait")
+  .action((sec) => unicornWait(parseInt(sec)));
 
 program.parse();
 

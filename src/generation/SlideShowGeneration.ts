@@ -1,21 +1,21 @@
 import { Executor } from "openscad-cli-wrapper";
 import path from "node:path";
 import { GenerateOptions } from "../types.js";
-import chalk from "chalk";
+import { CoolLog } from "../util/CoolLog.js";
 
 export async function GenerateSlideShow(
   images: string[],
   genOptions: GenerateOptions,
   executor: Executor,
 ): Promise<string> {
-  console.log(chalk.green(`➡️ Generating slide show in ${genOptions.generateSlideShow} format for files: ${images}`));
+  CoolLog.start(`Generating slide show in ${genOptions.generateSlideShow} format for files: ${images}`);
   let ret: string;
   if (genOptions.generateSlideShow === "webp") {
     ret = await GenerateWebpSlideShow(images, genOptions, executor);
   } else {
     ret = await GenerateGifSlideShow(images, genOptions, executor);
   }
-  console.log(chalk.green(`✅ Success generating slide show`));
+  CoolLog.success(`Success generating slide show`);
   return ret;
 }
 

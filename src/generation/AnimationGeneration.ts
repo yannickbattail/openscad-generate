@@ -1,4 +1,5 @@
 import { Executor, OpenScadOutputWithSummary } from "openscad-cli-wrapper";
+import { CoolLog } from "../util/CoolLog.js";
 
 export async function GenerateWebpAnimation(
   output: OpenScadOutputWithSummary,
@@ -17,7 +18,7 @@ export async function GenerateWebpAnimation(
     try {
       output.output += await executor(`rm ${escapedAnimImagesPattern}`);
     } catch (error) {
-      console.log(`Error cleaning anim images (${animImagesPattern})`, error);
+      CoolLog.oups(`Error cleaning anim images (${animImagesPattern})`, error);
     }
   }
   return output;
@@ -40,7 +41,7 @@ export async function GenerateGifAnimation(
     try {
       output.output += await executor(`rm ${escapedAnimImagesPattern}`);
     } catch (error) {
-      console.log(`Error cleaning anim images (${animImagesPattern})`, error);
+      CoolLog.oups(`Error cleaning anim images (${animImagesPattern})`, error);
     }
   }
   return output;

@@ -1,6 +1,6 @@
 import { exec } from "child_process";
-import chalk from "chalk";
 import util from "util";
+import { CoolLog } from "./CoolLog.js";
 
 export type Stdio = "pipe" | "stdout";
 
@@ -50,7 +50,7 @@ export async function execCommand(
 ): Promise<string> {
   try {
     if (showCommand) {
-      console.log(chalk.blue(`$ ${command}`));
+      CoolLog.debug(`$ ${command}`);
     }
     const execPromise = util.promisify(exec);
     const output = await execPromise(command, {
@@ -59,13 +59,13 @@ export async function execCommand(
       maxBuffer: 50 * 1024 * 1024,
     });
     if (stdio === "pipe" && !quietMode) {
-      console.log(`CMD output: ${output}`);
+      CoolLog.log(`CMD output: ${output}`);
     }
 
     return output.stdout + output.stderr;
   } catch (e) {
     if (allowFailure) {
-      console.warn(chalk.yellow(e && typeof e === "object" && "message" in e ? e.message : e));
+      CoolLog.warn(e && typeof e === "object" && "message" in e ? String(e.message) : String(e));
       return "";
     }
     throw e;

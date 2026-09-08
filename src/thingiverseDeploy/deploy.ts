@@ -1,9 +1,10 @@
 import * as path from "path";
-import { existsSync, readFileSync, statSync, unlinkSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { ThingData } from "./thingData.js";
 import { ThingiverseApi } from "./thingiverseApi.js";
 import { parseDocument } from "yaml";
 import { readFile, writeFile } from "../configuration/files.js";
+import { CoolLog } from "../util/CoolLog.js";
 
 interface LocalFile {
   name: string;
@@ -42,11 +43,11 @@ async function thingiverseDeployFiles(
           const naiveUploadTimestamp = new Date(remotefile.date! + "Z");
           const uploadTimestamp = naiveUploadTimestamp.getTime() / 1000;
           if (localfile.date! > uploadTimestamp) {
-            console.log(`Replacing file ${remotefile.name}`);
+            CoolLog.debug(`Replacing file ${remotefile.name}`);
             filesToDelete.push(remotefile);
             filesToUpload.push(localfile);
           } else {
-            console.log(`Keeping uploaded version ${remotefile.name}`);
+            CoolLog.debug(`Keeping uploaded version ${remotefile.name}`);
           }
         }
         break;
@@ -83,12 +84,12 @@ async function thingiverseDeployFiles(
   }
 
   for (const file of filesToDelete) {
-    console.log(`Deleting file ${file.name}`);
+    CoolLog.debug(`Deleting file ${file.name}`);
     await api.deleteThingFile(thingdata.thing_id, accessPath, file.id);
   }
 
   for (const file of filesToUpload) {
-    console.log(`Starting upload of ${file.name}`);
+    CoolLog.start(`Starting upload of ${file.name}`);
 
     const uploadCreds = await api.createFileUpload(thingdata.thing_id, file.name);
 
@@ -106,7 +107,7 @@ async function thingiverseDeployFiles(
 
     await api.finalizeUpload(fields.success_action_redirect);
 
-    console.log(`Upload of ${file.name} finished.`);
+    CoolLog.success(`Upload of ${file.name} finished.`);
   }
 }
 
@@ -129,7 +130,7 @@ async function thingiverseSetImageOrder(
 
 async function thingiversePublishProject(thingdata: ThingData, api: ThingiverseApi): Promise<void> {
   await api.publishThing(thingdata.thing_id);
-  console.log("Thing published");
+  CoolLog.info("Thing published");
 }
 
 function toLocalFiles(filePaths: string[], withDate: boolean): LocalFile[] {
@@ -163,14 +164,13 @@ function getDescrption(readmeFile: string): string | undefined {
   if (existsSync(readmeFile)) {
     const description = readFileSync(readmeFile, "utf-8");
     if (description.length > 1) {
-      console.log(`Using description from ${readmeFile}`);
+      CoolLog.debug(`Using description from ${readmeFile}`);
       return description;
     }
   }
 }
 
 export async function deployProject(openscadFile: string, thingData: ThingData): Promise<void> {
-  console.log(`Deploying project: ${thingData.name}`);
   const filePath = path.parse(openscadFile);
 
   thingData.description =
@@ -201,8 +201,6 @@ async function deployThingiverse(
   imgFiles: LocalFile[],
 ): Promise<void> {
   const filePath = path.parse(openscadFile);
-  const projectPath = filePath.dir;
-
   let mode: "create" | "patch";
   let thing: Record<string, unknown>;
 
@@ -211,11 +209,11 @@ async function deployThingiverse(
 
     if ("error" in thing) {
       if (thing.error === "Unauthorized") {
-        console.error("Unauthorized, is your API key correct? Exiting");
+        CoolLog.oups("Unauthorized, is your API key correct? Exiting");
         process.exit(77); // EX_NOPERM
       }
       if (thing.error === "Not Found") {
-        console.error("Thing ID specified but Thing not found, exiting");
+        CoolLog.oups("Thing ID specified but Thing not found, exiting");
         process.exit(64);
       }
     }
@@ -223,19 +221,18 @@ async function deployThingiverse(
     const creator = thing.creator as Record<string, unknown>;
     if (thingData.creator === creator.name) {
       mode = "patch";
-      console.log("Thing already exists, running in patch mode");
+      CoolLog.debug("Thing already exists, running in patch mode");
     } else {
-      console.error("Thing ID specified in thingdata.json does not belong to creator, exiting");
+      CoolLog.oups("Thing ID specified in thingdata.json does not belong to creator, exiting");
       process.exit(77);
     }
   } else {
     mode = "create";
-    console.log("No thing ID provided, running in creation mode");
+    CoolLog.debug("No thing ID provided, running in creation mode");
   }
 
   if (mode! === "create") {
-    console.log("");
-    console.log("Creating thing");
+    CoolLog.debug("Creating thing");
 
     const params = {
       name: thingData.name,
@@ -253,13 +250,11 @@ async function deployThingiverse(
     thing = await api.createThing(params);
 
     if (thing.id !== "") {
-      console.log(`Thing creation successful, thing ID: ${thing.id}`);
+      CoolLog.info(`Thing creation successful, thing ID: ${thing.id}`);
       saveNewThingId(thing.id, filePath);
     }
-
-    console.log("InitialCreation file generated");
   } else if (mode! === "patch") {
-    console.log("Patching thing");
+    CoolLog.debug("Patching thing");
 
     const params = {
       name: thingData.name,
@@ -276,42 +271,31 @@ async function deployThingiverse(
 
     await api.patchThing(thingData.thing_id, params);
 
-    console.log("Waiting for Thingiverse to refresh tags in response");
+    CoolLog.debug("Waiting for Thingiverse to refresh tags in response");
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     thing = await api.getThingAfterPatch(thingData.thing_id);
 
     if (thing.id === thingData.thing_id) {
-      console.log("Thing patching successful");
-    }
-
-    const initialCreationPath = path.join(projectPath, "InitialCreation");
-    if (existsSync(initialCreationPath)) {
-      unlinkSync(initialCreationPath);
-      console.log("InitialCreation file removed");
+      CoolLog.debug("Thing patching successful");
     }
   }
 
-  console.log("Deploying model files:");
+  CoolLog.debug("Deploying model files:");
   await thingiverseDeployFiles("/files", modelFiles, "whitelist", thingData, api);
 
-  console.log("Deploying images:");
+  CoolLog.debug("Deploying images:");
   await thingiverseDeployFiles("/images", imgFiles, modelFiles, thingData, api);
   await thingiverseSetImageOrder(imgFiles, thingData, api);
 
-  console.log("Testing if publishing is required");
   if (thingData.is_published && !thing!.is_published) {
-    console.log("Publishing thing");
     await thingiversePublishProject(thingData, api);
-  } else if (!thingData.is_published) {
-    console.log("Publishing not requested");
-  } else if (thing!.is_published) {
-    console.log("Thing already published");
   }
 
   const thingUrl = `https://thingiverse.com/thing:${thingData.thing_id}`;
-  console.info(`✅ Deploying thing ${thingUrl} done!`);
+  CoolLog.success(`Success deploying thing ${thingUrl} done!`);
 }
+
 function saveNewThingId(id: unknown, filePath: path.ParsedPath) {
   const configurationFilePath = `${filePath.dir || "."}/${filePath.name}.yaml`;
   const doc = parseDocument(readFile(configurationFilePath));
