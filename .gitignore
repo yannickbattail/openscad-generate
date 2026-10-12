@@ -4,3 +4,4 @@ coverage
 openscad-generate-*.tgz
 .idea
 .junie
+example/gen

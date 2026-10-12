@@ -21,6 +21,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "test": "vitest run --coverage ./tests/",
+    "test-integration": "cd ./example/ && ./generate_EasiestHeart.sh && ./diff_gen.sh",
     "lint": "eslint --fix src tests",
     "format": "prettier --log-level error --write .",
     "depcheck": "depcheck --quiet --ignore-path=./.gitignore --ignores='@types/*,@vitest/coverage-v8'",
