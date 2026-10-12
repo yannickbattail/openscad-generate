@@ -35,7 +35,7 @@
     "commander": "^15.0.0",
     "fast-xml-parser": "^5.11.2",
     "js-yaml": "^5.4.3",
-    "openscad-cli-wrapper": "^1.5.1",
+    "openscad-cli-wrapper": "^1.5.2",
     "p-limit": "^7.3.3",
     "yaml": "^2.9.1"
   },

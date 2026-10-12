@@ -4,6 +4,8 @@ import {
   Executor,
   Export2dFormat,
   Export3dFormat,
+  GenerateGifAnimation,
+  GenerateWebpAnimation,
   OpenScad,
   OpenScadOutputWithSummary,
   ParameterFileSet,
@@ -11,7 +13,6 @@ import {
   ParameterSetName,
 } from "openscad-cli-wrapper";
 import { ExportAllFormat, GeneratedFormat, GenerateOptions } from "../types.js";
-import { GenerateGifAnimation, GenerateWebpAnimation } from "./AnimationGeneration.js";
 import { deepClone } from "../util/deepClone.js";
 import { Enhance3mf } from "./Enhance3mf.js";
 import { CoolLog } from "../util/CoolLog.js";
@@ -106,8 +107,15 @@ function enhance3mf(options: GenerateOptions, summary: OpenScadOutputWithSummary
   if (options.embedSourcesIn3mf || options.embedThumbnailIn3mf) {
     const enhance = new Enhance3mf(summary.file);
     if (options.embedThumbnailIn3mf) {
-      enhance.addThumbnail();
-      CoolLog.info(`Added thumbnail to ${parameterFileSet.parameterName}`);
+      try {
+        enhance.addThumbnail();
+        CoolLog.info(`Added thumbnail to ${parameterFileSet.parameterName}`);
+      } catch (e) {
+        CoolLog.warn(
+          `Could not added thumbnail to ${parameterFileSet.parameterName}`,
+          e && typeof e == "object" && "message" in e ? e.message : e,
+        );
+      }
     }
     if (options.embedSourcesIn3mf) {
       enhance.addSourceFile(summary.modelFile);

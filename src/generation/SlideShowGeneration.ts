@@ -1,4 +1,4 @@
-import { Executor } from "openscad-cli-wrapper";
+import { CommandReturn, Executor } from "openscad-cli-wrapper";
 import path from "node:path";
 import { GenerateOptions } from "../types.js";
 import { CoolLog } from "../util/CoolLog.js";
@@ -7,15 +7,27 @@ export async function GenerateSlideShow(
   images: string[],
   genOptions: GenerateOptions,
   executor: Executor,
-): Promise<string> {
+): Promise<{
+  code: number | null;
+  stdout: string;
+  stderr: string;
+}> {
   CoolLog.start(`Generating slide show in ${genOptions.generateSlideShow} format for files: ${images}`);
-  let ret: string;
+  let ret: {
+    code: number | null;
+    stdout: string;
+    stderr: string;
+  };
   if (genOptions.generateSlideShow === "webp") {
     ret = await GenerateWebpSlideShow(images, genOptions, executor);
   } else {
     ret = await GenerateGifSlideShow(images, genOptions, executor);
   }
-  CoolLog.success(`Success generating slide show`);
+  if (ret.code === 0) {
+    CoolLog.success(`Success generating slide show`);
+  } else {
+    CoolLog.oups(`Error when generating slide show`, ret.stdout + " " + ret.stderr);
+  }
   return ret;
 }
 
@@ -23,24 +35,29 @@ async function GenerateWebpSlideShow(
   images: string[],
   genOptions: GenerateOptions,
   executor: Executor,
-): Promise<string> {
-  const debugCmd = genOptions.openScadOptions.debug ? "-v" : "";
-  const escapedImages = images.map((img) => `'${img}'`).join(" ");
+): Promise<CommandReturn> {
   const slideShowFile = `${genOptions.outputDir}/slideShow_${path.parse(genOptions.fileName).name}.webp`;
-  return await executor(
-    `img2webp ${debugCmd} -o '${slideShowFile}' -d '${genOptions.slideShowInterval}' ${escapedImages}`,
-  );
+  return await executor([
+    `img2webp`,
+    ...(genOptions.openScadOptions.debug ? ["-v"] : []),
+    ...[`-o`, slideShowFile],
+    ...[`-d`, genOptions.slideShowInterval.toString()],
+    ...images,
+  ]);
 }
 
 async function GenerateGifSlideShow(
   images: string[],
   genOptions: GenerateOptions,
   executor: Executor,
-): Promise<string> {
-  const debugCmd = genOptions.openScadOptions.debug ? "-verbose" : "";
-  const escapedImages = images.map((img) => `'${img}'`).join(" ");
+): Promise<{ code: number | null; stdout: string; stderr: string }> {
   const slideShowFile = `${genOptions.outputDir}/slideShow_${path.parse(genOptions.fileName).name}.gif`;
-  return await executor(
-    `convert ${debugCmd} -delay '${genOptions.slideShowInterval * 10}' -loop 0 ${escapedImages} '${slideShowFile}'`,
-  );
+  return await executor([
+    `convert`,
+    ...(genOptions.openScadOptions.debug ? ["-verbose"] : []),
+    ...[`-delay`, (genOptions.slideShowInterval * 10).toString()],
+    ...[`-loop`, "0"],
+    ...images,
+    slideShowFile,
+  ]);
 }
