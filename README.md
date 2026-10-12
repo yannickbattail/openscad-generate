@@ -2,21 +2,20 @@
 
 nodejs script to generate 3D models and images from OpenSCAD files.
 
-It generates for all the presets:
+It generates for all the customizer presets:
 
 - png image and webp (or gif) animation
-- 3mf 3D model
+- 3mf colored 3D model
 - add thumbnail to the 3mf model and source code
 - mosaic of all the presets
 - generate a slide show of all presets in webp (or gif)
+- publish to thingiverse
 
-More formats can be use: stl,asciistl,binstl,off,wrl,amf,3mf,pov,dxf,svg,pdf,png,gif,webp
+Output formats can be: stl, asciistl, binstl, off, wrl, 3mf, pov, dxf, svg, pdf, png, gif and webp
 
 ```bash
-npx openscad-generate@latest generate --outFormats png,webp,3mf --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
+npx openscad-generate@latest generate --configFile OPENSCAD_FILE.yaml OPENSCAD_FILE.scad
 ```
-
-Add the option `--mosaicFormat 2,2` to generate a mosaic 2 rows, 2 lines.
 
 You can use the option `--parallelJobs 7` to generate in parallel. (optimal number is your CPU number of cores minus
 
@@ -28,7 +27,7 @@ run the command `init` to generate a skeleton for your project.
 
 ```bash
 npx openscad-generate@latest init --add-generate-script true ./example.scad
-chmod +x generate_example.sh
+chmod +x generate_example.sh deploy_example.sh
 ```
 
 if will generate the following files:
@@ -38,6 +37,7 @@ if will generate the following files:
 - `example.yaml` the configuration file for openscad-generate
 - `example.md` a README (replace the '???')
 - `generate_example.sh` generation script
+- `deploy_example.sh` deployment script
 - `.gitignore` gitignore file to ignore the generated folder 'gen'
 
 now you can run the script to generate the 3D model, animations and images.

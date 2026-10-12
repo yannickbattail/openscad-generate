@@ -53,6 +53,7 @@ exports[`generation > getOpenscadOptions 1`] = `
       "python_engine": false,
       "roof": true,
       "textmetrics": true,
+      "unicode_identifiers": true,
       "vector_swizzle": true,
       "vertex_object_renderers_indexing": false,
     },

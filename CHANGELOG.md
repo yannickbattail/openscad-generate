@@ -1,5 +1,44 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.4.8] - 2026-10-13
+
+### Added
+
+- openscad file example
+- integration test
+
+### Changed
+
+- use GenerateAnimation and GenerateMosaic from openscad-cli-wrapper
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- typo in init configuration file
+
+### Security
+
+- update packages
+
 ## [1.4.7] - 2026-09-08
 
 ### Added

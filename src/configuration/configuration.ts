@@ -25,7 +25,6 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
       //    Export3dFormat.binstl,
       //    Export3dFormat.off,
       //    Export3dFormat.wrl,
-      //    Export3dFormat.amf,
       //    Export3dFormat.pov,
     ],
     generateMosaic: true,
@@ -158,6 +157,7 @@ export function getDefaultOpenscadOptions(): GenerateOptions {
         discretization_by_error: false,
         vector_swizzle: true,
         ai_features: false,
+        unicode_identifiers: true,
         python_engine: false,
       },
     },
@@ -264,6 +264,7 @@ thingiverse:
   is_wip: true
   ### Toggle whether this thing is published.
   is_published: false
+  ### Toggle whether this thing uses the customizer (true)
   is_customizer: true
   ### An array of thing ids that this thing is derived from.
   ancestors: []
@@ -272,21 +273,25 @@ thingiverse:
   ### images to be uploaded to thingiverse (the first one will be the cover image)
   images:
   #- photos/${baseFile}_cover.jpg
-  - slideShow_${baseFile}.webp
-  - mosaic_${baseFile}.jpg
+  - ./gen/slideShow_${baseFile}.webp
+  - ./gen/mosaic_${baseFile}.jpg
 
-  - ${baseFile}_all_20.webp
-  - ${baseFile}_all_20.png
+  - ./gen/${baseFile}_all_20.webp
+  - ./gen/${baseFile}_all_20.png
 
-  - ${baseFile}_ball_50.webp
-  - ${baseFile}_ball_50.png
+  - ./gen/${baseFile}_ball_50.webp
+  - ./gen/${baseFile}_ball_50.png
 
-  - ${baseFile}_stick_50.webp
-  - ${baseFile}_stick_50.png
+  - ./gen/${baseFile}_stick_50.webp
+  - ./gen/${baseFile}_stick_50.png
+
   ### files (models) to be uploaded to thingiverse (the first one will be the cover image)
   files:
-  - ${baseFile}.scad
-  - ${baseFile}.json
+  - ./gen/${baseFile}.scad
+  - ./gen/${baseFile}.json
+  - ./gen/${baseFile}_all_20.3mf
+  - ./gen/${baseFile}_ball_50.3mf
+  - ./gen/${baseFile}_stick_50.3mf
 outFormats:
   ### image
   - png
@@ -312,9 +317,7 @@ outFormats:
   # - off
   ### 3D: Virtual Reality Modeling Language
   # - wrl
-  ### 3D: previous version or 3mf, use 3mf instead if possible
-  # - amf
-  ### 3: POV-Ray Raytracing Format
+  ### 3D: POV-Ray Raytracing Format
   # - pov
 generateMosaic: true
 mosaicOptions:

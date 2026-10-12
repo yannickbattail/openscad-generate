@@ -1,0 +1,7 @@
+example
+coverage
+openscad-generate-*.tgz
+.idea
+.junie
+Dockerfile
+generate.sh
